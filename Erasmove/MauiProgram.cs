@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Erasmove.Services;
+using Erasmove.ViewModels;
+using Erasmove.Views;
 
 namespace Erasmove;
 
@@ -18,6 +21,18 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+
+        // Register Services
+        builder.Services.AddSingleton<UserService>();
+
+        // Register ViewModels
+        builder.Services.AddTransient<AuthenticationViewModel>();
+        builder.Services.AddTransient<AccountViewModel>();
+
+        // Register Views
+        builder.Services.AddTransient<AuthenticationPage>();
+        builder.Services.AddTransient<AccountPage>();
+        builder.Services.AddTransient<MainPage>();
 
         return builder.Build();
     }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Erasmove.ViewModels"
+             x:Class="Erasmove.Views.AccountPage"
+             x:DataType="viewmodels:AccountViewModel"
+             Title="Mon compte"
+             BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1C1C1E}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+            <!-- Avatar placeholder -->
+            <Frame WidthRequest="100"
+                   HeightRequest="100"
+                   CornerRadius="50"
+                   BackgroundColor="#512BD4"
+                   BorderColor="Transparent"
+                   HorizontalOptions="Center"
+                   Padding="0"
+                   IsClippedToBounds="True">
+                <Label Text="👤"
+                       FontSize="40"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Frame>
+
+            <!-- User name -->
+            <Label Text="{Binding FullName}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"/>
+
+            <!-- User email -->
+            <Label Text="{Binding Email}"
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#CCCCCC}"/>
+
+            <!-- Separator -->
+            <BoxView HeightRequest="1"
+                     Color="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                     Margin="0,10"/>
+
+            <!-- Account info section -->
+            <Label Text="Informations du compte"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"/>
+
+            <Frame Padding="15"
+                   BorderColor="Transparent"
+                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                   CornerRadius="10">
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="Nom :"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                               WidthRequest="60"/>
+                        <Label Text="{Binding FullName}"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="Email :"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                               WidthRequest="60"/>
+                        <Label Text="{Binding Email}"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Logout button -->
+            <Button Text="Se déconnecter"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="#E53935"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="55"
+                    Margin="0,20,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

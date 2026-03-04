@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Erasmove.ViewModels"
+             x:Class="Erasmove.Views.AuthenticationPage"
+             x:DataType="viewmodels:AuthenticationViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1C1C1E}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+            
+            <!-- Logo/Title -->
+            <Label Text="Erasmove"
+                   FontSize="40"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"
+                   Margin="0,0,0,20"/>
+
+            <Label Text="{Binding ActionButtonText}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#CCCCCC}"/>
+
+            <!-- Full Name Field (only for registration) -->
+            <Frame IsVisible="{Binding IsRegisterMode}"
+                   Padding="0"
+                   BorderColor="Transparent"
+                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                   CornerRadius="10">
+                <Entry Text="{Binding FullName}"
+                       Placeholder="Nom complet"
+                       FontSize="16"
+                       Margin="15,10"/>
+            </Frame>
+
+            <!-- Email Field -->
+            <Frame Padding="0"
+                   BorderColor="Transparent"
+                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                   CornerRadius="10">
+                <Entry Text="{Binding Email}"
+                       Placeholder="Email"
+                       Keyboard="Email"
+                       FontSize="16"
+                       Margin="15,10"/>
+            </Frame>
+
+            <!-- Password Field -->
+            <Frame Padding="0"
+                   BorderColor="Transparent"
+                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                   CornerRadius="10">
+                <Entry Text="{Binding Password}"
+                       Placeholder="Mot de passe"
+                       IsPassword="True"
+                       FontSize="16"
+                       Margin="15,10"/>
+            </Frame>
+
+            <!-- Confirm Password Field (only for registration) -->
+            <Frame IsVisible="{Binding IsRegisterMode}"
+                   Padding="0"
+                   BorderColor="Transparent"
+                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                   CornerRadius="10">
+                <Entry Text="{Binding ConfirmPassword}"
+                       Placeholder="Confirmer le mot de passe"
+                       IsPassword="True"
+                       FontSize="16"
+                       Margin="15,10"/>
+            </Frame>
+
+            <!-- Error Message -->
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="Red"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                              IsVisible="{Binding IsLoading}"
+                              Color="{AppThemeBinding Light=#512BD4, Dark=#AC99EA}"
+                              HeightRequest="40"/>
+
+            <!-- Login/Register Button -->
+            <Button Text="{Binding ActionButtonText}"
+                    Command="{Binding LoginCommand}"
+                    IsVisible="{Binding IsLoginMode}"
+                    BackgroundColor="#512BD4"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="55"
+                    Margin="0,10,0,0"/>
+
+            <Button Text="{Binding ActionButtonText}"
+                    Command="{Binding RegisterCommand}"
+                    IsVisible="{Binding IsRegisterMode}"
+                    BackgroundColor="#512BD4"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="55"
+                    Margin="0,10,0,0"/>
+
+            <!-- Toggle Mode Button -->
+            <Button Text="{Binding ModeButtonText}"
+                    Command="{Binding ToggleModeCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="#512BD4"
+                    FontSize="16"
+                    HeightRequest="50"
+                    Margin="0,10,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
