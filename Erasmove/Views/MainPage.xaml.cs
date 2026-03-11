@@ -1,4 +1,5 @@
-﻿using Erasmove.ViewModels;
+﻿using Mapsui.Tiling;
+using Erasmove.ViewModels;
 
 namespace Erasmove.Views;
 
@@ -8,5 +9,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+
+        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
     }
 }
