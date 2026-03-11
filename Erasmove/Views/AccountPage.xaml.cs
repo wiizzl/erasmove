@@ -13,9 +13,9 @@ public partial class AccountPage : ContentPage
         _viewModel = viewModel;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.LoadUser();
+        await _viewModel.LoadUserAsync();
     }
 }

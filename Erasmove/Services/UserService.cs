@@ -1,91 +1,164 @@
 using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
+using MySqlConnector;
 using Erasmove.Models;
 
 namespace Erasmove.Services;
 
 public class UserService
 {
-    private readonly string _filePath;
-    private List<User> _users;
+    private const int SaltSize = 32;
+    private const int HashSize = 64;
+    private const int Iterations = 100_000;
+    private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA512;
+
+    private const string SessionKey = "current_user_id";
+    private readonly string _connectionString;
 
     public UserService()
     {
-        _filePath = Path.Combine(FileSystem.AppDataDirectory, "users.json");
-        _users = LoadUsers();
+        var server = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
+        _connectionString = $"Server={server};Port=3306;Database=ErasmoveDb;User=root;Password=SuperMotDePasse!123;";
     }
 
-    public User? GetCurrentUser() => _users.FirstOrDefault(u => u.IsLoggedIn);
-
-    public bool EmailExists(string email)
+    public async Task InitializeAsync()
     {
-        return _users.Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new MySqlCommand("""
+            CREATE TABLE IF NOT EXISTS Users (
+                Id VARCHAR(36) PRIMARY KEY,
+                Email VARCHAR(320) NOT NULL,
+                PasswordHash VARCHAR(128) NOT NULL,
+                PasswordSalt VARCHAR(128) NOT NULL,
+                FullName VARCHAR(200) NOT NULL,
+                CreatedAt DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+                UNIQUE INDEX UQ_Users_Email (Email)
+            ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+            """, connection);
+        await command.ExecuteNonQueryAsync();
     }
 
-    public User? Login(string email, string password)
+    public async Task<User?> GetCurrentUserAsync()
     {
-        var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-        if (user is null)
+        var userId = Preferences.Get(SessionKey, string.Empty);
+        if (string.IsNullOrEmpty(userId))
             return null;
 
-        var hashedPassword = HashPassword(password);
-        if (user.PasswordHash != hashedPassword)
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new MySqlCommand(
+            "SELECT Id, Email, FullName FROM Users WHERE Id = @Id", connection);
+        command.Parameters.AddWithValue("@Id", userId);
+
+        await using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return new User
+            {
+                Id = reader.GetString(0),
+                Email = reader.GetString(1),
+                FullName = reader.GetString(2)
+            };
+        }
+
+        Preferences.Remove(SessionKey);
+        return null;
+    }
+
+    public async Task<User?> LoginAsync(string email, string password)
+    {
+        var trimmedEmail = email.Trim();
+
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new MySqlCommand(
+            "SELECT Id, Email, FullName, PasswordHash, PasswordSalt FROM Users WHERE Email = @Email", connection);
+        command.Parameters.AddWithValue("@Email", trimmedEmail);
+
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
             return null;
 
-        user.IsLoggedIn = true;
-        SaveUsers();
+        var storedHash = reader.GetString(3);
+        var storedSalt = reader.GetString(4);
+
+        if (!VerifyPassword(password, storedHash, storedSalt))
+            return null;
+
+        var user = new User
+        {
+            Id = reader.GetString(0),
+            Email = reader.GetString(1),
+            FullName = reader.GetString(2)
+        };
+
+        Preferences.Set(SessionKey, user.Id);
         return user;
     }
 
-    public User Register(string fullName, string email, string password)
+    public async Task<bool> EmailExistsAsync(string email)
     {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new MySqlCommand(
+            "SELECT COUNT(1) FROM Users WHERE Email = @Email", connection);
+        command.Parameters.AddWithValue("@Email", email.Trim());
+
+        return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+    }
+
+    public async Task<User> RegisterAsync(string fullName, string email, string password)
+    {
+        var salt = GenerateSalt();
         var user = new User
         {
             Id = Guid.NewGuid().ToString(),
-            FullName = fullName,
-            Email = email,
-            PasswordHash = HashPassword(password),
-            IsLoggedIn = true
+            FullName = fullName.Trim(),
+            Email = email.Trim()
         };
 
-        _users.Add(user);
-        SaveUsers();
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new MySqlCommand(
+            "INSERT INTO Users (Id, Email, PasswordHash, PasswordSalt, FullName) VALUES (@Id, @Email, @PasswordHash, @PasswordSalt, @FullName)",
+            connection);
+        command.Parameters.AddWithValue("@Id", user.Id);
+        command.Parameters.AddWithValue("@Email", user.Email);
+        command.Parameters.AddWithValue("@PasswordHash", HashPassword(password, salt));
+        command.Parameters.AddWithValue("@PasswordSalt", Convert.ToBase64String(salt));
+        command.Parameters.AddWithValue("@FullName", user.FullName);
+
+        await command.ExecuteNonQueryAsync();
+
+        Preferences.Set(SessionKey, user.Id);
         return user;
     }
 
     public void Logout()
     {
-        foreach (var user in _users)
-            user.IsLoggedIn = false;
-        SaveUsers();
+        Preferences.Remove(SessionKey);
     }
 
-    private static string HashPassword(string password)
+    private static byte[] GenerateSalt()
     {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-        return Convert.ToHexString(bytes);
+        return RandomNumberGenerator.GetBytes(SaltSize);
     }
 
-    private List<User> LoadUsers()
+    private static string HashPassword(string password, byte[] salt)
     {
-        if (!File.Exists(_filePath))
-            return [];
-
-        try
-        {
-            var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<List<User>>(json) ?? [];
-        }
-        catch
-        {
-            return [];
-        }
+        var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithm, HashSize);
+        return Convert.ToBase64String(hash);
     }
 
-    private void SaveUsers()
+    private static bool VerifyPassword(string password, string storedHash, string storedSalt)
     {
-        var json = JsonSerializer.Serialize(_users);
-        File.WriteAllText(_filePath, json);
+        var salt = Convert.FromBase64String(storedSalt);
+        var hashToVerify = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithm, HashSize);
+        return CryptographicOperations.FixedTimeEquals(hashToVerify, Convert.FromBase64String(storedHash));
     }
 }

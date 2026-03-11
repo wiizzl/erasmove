@@ -17,7 +17,6 @@ public class AccountViewModel : INotifyPropertyChanged
     {
         _userService = userService;
         LogoutCommand = new Command(async () => await OnLogout());
-        LoadUser();
     }
 
     public string FullName
@@ -48,9 +47,9 @@ public class AccountViewModel : INotifyPropertyChanged
 
     public ICommand LogoutCommand { get; }
 
-    public void LoadUser()
+    public async Task LoadUserAsync()
     {
-        var user = _userService.GetCurrentUser();
+        var user = await _userService.GetCurrentUserAsync();
         if (user is not null)
         {
             FullName = user.FullName;

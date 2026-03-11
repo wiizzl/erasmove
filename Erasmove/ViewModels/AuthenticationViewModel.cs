@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Erasmove.Models;
 using Erasmove.Services;
 
 namespace Erasmove.ViewModels;
@@ -149,18 +148,10 @@ public class AuthenticationViewModel : INotifyPropertyChanged
 
         try
         {
-            await Task.Delay(300);
-
-            if (!_userService.EmailExists(Email))
-            {
-                ErrorMessage = "Aucun compte n'existe avec cet email";
-                return;
-            }
-
-            var user = _userService.Login(Email, Password);
+            var user = await _userService.LoginAsync(Email, Password);
             if (user is null)
             {
-                ErrorMessage = "Mot de passe incorrect";
+                ErrorMessage = "Email ou mot de passe incorrect";
                 return;
             }
 
@@ -185,15 +176,13 @@ public class AuthenticationViewModel : INotifyPropertyChanged
 
         try
         {
-            await Task.Delay(300);
-
-            if (_userService.EmailExists(Email))
+            if (await _userService.EmailExistsAsync(Email))
             {
                 ErrorMessage = "Un compte existe déjà avec cet email";
                 return;
             }
 
-            _userService.Register(FullName, Email, Password);
+            await _userService.RegisterAsync(FullName, Email, Password);
 
             await Shell.Current.GoToAsync("//MainPage");
         }
@@ -261,9 +250,15 @@ public class AuthenticationViewModel : INotifyPropertyChanged
             return false;
         }
 
-        if (Password.Length < 6)
+        if (Password.Length < 8)
         {
-            ErrorMessage = "Le mot de passe doit contenir au moins 6 caractères";
+            ErrorMessage = "Le mot de passe doit contenir au moins 8 caractères";
+            return false;
+        }
+
+        if (!Password.Any(char.IsUpper) || !Password.Any(char.IsLower) || !Password.Any(char.IsDigit))
+        {
+            ErrorMessage = "Le mot de passe doit contenir une majuscule, une minuscule et un chiffre";
             return false;
         }
 
