@@ -1,27 +1,15 @@
 services:
-  mysql:
-    image: mysql:8.0
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: erasmove-db
     environment:
-      MYSQL_ROOT_PASSWORD: SuperMotDePasse!123
-      MYSQL_DATABASE: ErasmoveDb
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "SuperMotDePasse!123"
     ports:
-      - "3306:3306"
+      - "1433:1433"
     volumes:
-      - mysql_data:/var/lib/mysql
-    restart: unless-stopped
-
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: erasmove-phpmyadmin
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-    ports:
-      - "8080:80"
-    depends_on:
-      - mysql
+      - sqlserver_data:/var/opt/mssql
     restart: unless-stopped
 
 volumes:
-  mysql_data:
+  sqlserver_data:

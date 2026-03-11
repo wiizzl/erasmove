@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 using Erasmove.Models;
 
 namespace Erasmove.Services;
@@ -17,26 +17,36 @@ public class UserService
     public UserService()
     {
         var server = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
-        _connectionString = $"Server={server};Port=3306;Database=ErasmoveDb;User=root;Password=SuperMotDePasse!123;";
+        _connectionString = $"Server={server},1433;Database=ErasmoveDb;User Id=sa;Password=SuperMotDePasse!123;TrustServerCertificate=True;";
     }
 
     public async Task InitializeAsync()
     {
-        await using var connection = new MySqlConnection(_connectionString);
+        var masterConnectionString = _connectionString.Replace("Database=ErasmoveDb;", "Database=master;");
+
+        await using var masterConnection = new SqlConnection(masterConnectionString);
+        await masterConnection.OpenAsync();
+
+        await using var createDbCmd = new SqlCommand(
+            "IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ErasmoveDb') CREATE DATABASE ErasmoveDb;",
+            masterConnection);
+        await createDbCmd.ExecuteNonQueryAsync();
+
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        await using var command = new MySqlCommand("""
-            CREATE TABLE IF NOT EXISTS Users (
-                Id VARCHAR(36) PRIMARY KEY,
-                Email VARCHAR(320) NOT NULL,
-                PasswordHash VARCHAR(128) NOT NULL,
-                PasswordSalt VARCHAR(128) NOT NULL,
-                FullName VARCHAR(200) NOT NULL,
-                CreatedAt DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
-                UNIQUE INDEX UQ_Users_Email (Email)
-            ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+        await using var createTableCmd = new SqlCommand("""
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Users')
+            CREATE TABLE Users (
+                Id NVARCHAR(36) PRIMARY KEY,
+                Email NVARCHAR(320) NOT NULL UNIQUE,
+                PasswordHash NVARCHAR(128) NOT NULL,
+                PasswordSalt NVARCHAR(128) NOT NULL,
+                FullName NVARCHAR(200) NOT NULL,
+                CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+            );
             """, connection);
-        await command.ExecuteNonQueryAsync();
+        await createTableCmd.ExecuteNonQueryAsync();
     }
 
     public async Task<User?> GetCurrentUserAsync()
@@ -45,10 +55,10 @@ public class UserService
         if (string.IsNullOrEmpty(userId))
             return null;
 
-        await using var connection = new MySqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        await using var command = new MySqlCommand(
+        await using var command = new SqlCommand(
             "SELECT Id, Email, FullName FROM Users WHERE Id = @Id", connection);
         command.Parameters.AddWithValue("@Id", userId);
 
@@ -71,10 +81,10 @@ public class UserService
     {
         var trimmedEmail = email.Trim();
 
-        await using var connection = new MySqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        await using var command = new MySqlCommand(
+        await using var command = new SqlCommand(
             "SELECT Id, Email, FullName, PasswordHash, PasswordSalt FROM Users WHERE Email = @Email", connection);
         command.Parameters.AddWithValue("@Email", trimmedEmail);
 
@@ -101,14 +111,14 @@ public class UserService
 
     public async Task<bool> EmailExistsAsync(string email)
     {
-        await using var connection = new MySqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        await using var command = new MySqlCommand(
+        await using var command = new SqlCommand(
             "SELECT COUNT(1) FROM Users WHERE Email = @Email", connection);
         command.Parameters.AddWithValue("@Email", email.Trim());
 
-        return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+        return (int)await command.ExecuteScalarAsync()! > 0;
     }
 
     public async Task<User> RegisterAsync(string fullName, string email, string password)
@@ -121,10 +131,10 @@ public class UserService
             Email = email.Trim()
         };
 
-        await using var connection = new MySqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        await using var command = new MySqlCommand(
+        await using var command = new SqlCommand(
             "INSERT INTO Users (Id, Email, PasswordHash, PasswordSalt, FullName) VALUES (@Id, @Email, @PasswordHash, @PasswordSalt, @FullName)",
             connection);
         command.Parameters.AddWithValue("@Id", user.Id);
