@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Erasmove.ViewModels;
+using Erasmove.Views;
+using Microsoft.Extensions.Logging;
 
 namespace Erasmove;
 
@@ -14,6 +16,12 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+        
+        builder.Services.AddSingleton<AppShell>();
+        
+        builder.Services.AddSingleton<MainViewModel>();
+        
+        builder.Services.AddSingleton<MainPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
