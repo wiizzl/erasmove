@@ -11,7 +11,7 @@
             Padding="30,0"
             Spacing="25">
             
-            <VerticalStackLayout IsVisible="{Binding !IsManager}">
+            <VerticalStackLayout IsVisible="{Binding IsNotManager}">
                 <mapsui:MapControl x:Name="MapControl" />
             </VerticalStackLayout>
             

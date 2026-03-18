@@ -1,5 +1,6 @@
 ﻿using Erasmove.Database;
 using Erasmove.Repositories;
+using Erasmove.Services;
 using Erasmove.ViewModels;
 using Erasmove.Views;
 using Microsoft.Data.SqlClient;
@@ -36,6 +37,8 @@ public static class MauiProgram
         builder.Services.AddTransient<TransportRepository>();
         builder.Services.AddTransient<TravelerRepository>();
         builder.Services.AddTransient<TripRepository>();
+
+        builder.Services.AddSingleton<AuthService>();
 
         builder.Services.AddSingleton<AppShell>();
         
