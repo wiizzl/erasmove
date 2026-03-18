@@ -3,16 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
              x:Class="Erasmove.Views.MainPage"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              x:DataType="vm:MainViewModel">
 
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25">
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+            
+            <VerticalStackLayout IsVisible="{Binding !IsManager}">
+                <mapsui:MapControl x:Name="MapControl" />
+            </VerticalStackLayout>
+            
         </VerticalStackLayout>
     </ScrollView>
 

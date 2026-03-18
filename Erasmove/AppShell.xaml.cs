@@ -1,13 +1,12 @@
-﻿using Erasmove.Views;
+﻿using Erasmove.ViewModels;
 
 namespace Erasmove;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
+    public AppShell(AppShellViewModel viewModel)
     {
         InitializeComponent();
-        
-        Routing.RegisterRoute("MainPage", typeof(MainPage));
+        BindingContext = viewModel;
     }
 }
