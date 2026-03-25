@@ -12,7 +12,7 @@ public class DatabaseHelper
         _connectionString = connectionString;
     }
 
-    public async Task<List<T>> ExecuteReaderAsync<T>(string storedProcedure, Func<SqlDataReader, T> mapItem, SqlParameter[] parameters = null)
+    public async Task<List<T>> ExecuteReaderAsync<T>(string storedProcedure, Func<SqlDataReader, T> mapItem, SqlParameter[]? parameters = null)
     {
         var list = new List<T>();
 
@@ -36,7 +36,7 @@ public class DatabaseHelper
         return list;
     }
 
-    public async Task<int> ExecuteNonQueryAsync(string storedProcedure, SqlParameter[] parameters = null)
+    public async Task<int> ExecuteNonQueryAsync(string storedProcedure, SqlParameter[]? parameters = null)
     {
         await using var connection = new SqlConnection(_connectionString);
         await using var command = new SqlCommand(storedProcedure, connection);

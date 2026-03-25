@@ -5,6 +5,7 @@ using Erasmove.ViewModels;
 using Erasmove.Views;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace Erasmove;
 
@@ -15,6 +16,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseSkiaSharp()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -39,7 +41,7 @@ public static class MauiProgram
         builder.Services.AddTransient<TripRepository>();
 
         builder.Services.AddSingleton<AuthService>();
-
+        
         builder.Services.AddSingleton<AppShell>();
         
         builder.Services.AddSingleton<AppShellViewModel>();
@@ -52,7 +54,6 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-
         return builder.Build();
     }
 }

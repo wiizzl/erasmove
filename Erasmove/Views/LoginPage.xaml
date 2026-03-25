@@ -11,7 +11,6 @@
         <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True" />
         <Label Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" />
         <Button Text="Login" Command="{Binding LoginCommand}" />
-        
     </VerticalStackLayout>
 
 </ContentPage>

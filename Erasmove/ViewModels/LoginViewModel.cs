@@ -48,7 +48,7 @@ public partial class LoginViewModel : ObservableObject
             {
                 _authService.Login(account);
                 
-                await Shell.Current.GoToAsync($"//MainPage");
+                await Shell.Current.GoToAsync("//MainPage");
                 
                 Email = string.Empty;
                 Password = string.Empty;
@@ -60,7 +60,7 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = "Erreur de connexion à la base de données.";
+            ErrorMessage = $"Erreur de connexion à la base de données. {ex.Message}";
         }
         finally
         {

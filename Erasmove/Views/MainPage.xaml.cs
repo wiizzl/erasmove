@@ -1,5 +1,5 @@
 ﻿using Erasmove.ViewModels;
-using Mapsui.Tiling;
+using Mapsui.UI.Maui;
 
 namespace Erasmove.Views;
 
@@ -10,6 +10,8 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
         
-        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        var mapControl = new MapControl();
+        mapControl.Map?.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
+        Content = mapControl;
     }
 }

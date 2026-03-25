@@ -10,7 +10,7 @@ public class Trip
     public int PlaceId { get; set; }
     public int TransportId { get; set; }
 
-    public Traveler Traveler { get; set; }
-    public Place Place { get; set; }
-    public Transport Transport { get; set; }
+    public Traveler? Traveler { get; set; }
+    public Place? Place { get; set; }
+    public Transport? Transport { get; set; }
 }
