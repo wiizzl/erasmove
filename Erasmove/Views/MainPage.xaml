@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Erasmove.ViewModels"
              xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
-             x:Class="Erasmove.Views.MainPage">
+             x:Class="Erasmove.Views.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="Carte">
 
-    <mapsui:MapView x:Name="MapView" />
+    <Grid RowDefinitions="Auto, *">
+        <Frame Grid.Row="0" Margin="10" Padding="15" CornerRadius="10" HasShadow="True" BackgroundColor="{AppThemeBinding Light=White, Dark=#2C2C2C}">
+            <VerticalStackLayout Spacing="10">
+                <Entry Placeholder="Point de départ (ex: Paris)" Text="{Binding StartPoint}" />
+
+                <CollectionView ItemsSource="{Binding Waypoints}" MinimumHeightRequest="0" MaximumHeightRequest="150">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:WaypointModel">
+                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10" Margin="0,5,0,0">
+                                <Entry Placeholder="Escale" Text="{Binding Name}" Grid.Column="0" />
+                                <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=RemoveWaypointCommand}" CommandParameter="{Binding .}" Grid.Column="1" BackgroundColor="Transparent" TextColor="Red" Padding="0" WidthRequest="30" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Text="+ Ajouter une escale" Command="{Binding AddWaypointCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" HorizontalOptions="Start" Padding="0" />
+
+                <Entry Placeholder="Point d'arrivée (ex: Marseille)" Text="{Binding Destination}" />
+
+                <Button Text="Rechercher l'itinéraire" Command="{Binding SearchRouteCommand}" CornerRadius="20" Margin="0,10,0,0" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <mapsui:MapView x:Name="MapView" Grid.Row="1" />
+    </Grid>
 
 </ContentPage>

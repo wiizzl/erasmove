@@ -11,6 +11,9 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        return new Window(new AppShell());
+        var services = activationState?.Context?.Services ?? Current?.Handler?.MauiContext?.Services;
+        var shell = services?.GetService<AppShell>();
+
+        return shell is null ? throw new InvalidOperationException("AppShell is not reachable.") : new Window(shell);
     }
 }
