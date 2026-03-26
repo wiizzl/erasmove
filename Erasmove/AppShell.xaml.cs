@@ -9,21 +9,28 @@ public partial class AppShell : Shell
 
     public AppShell(AppShellViewModel viewModel, AuthService authService)
     {
+        _authService = authService;
         InitializeComponent();
         BindingContext = viewModel;
-        _authService = authService;
     }
 
-    protected override async void OnNavigating(ShellNavigatingEventArgs args)
+    protected override void OnNavigating(ShellNavigatingEventArgs args)
     {
         base.OnNavigating(args);
 
+        if (_authService == null) return;
+
         // Si l'utilisateur n'est pas connecté et qu'il essaie d'accéder à la page d'accueil (ou toute autre page qui n'est pas LoginPage)
-        if (!_authService.IsAuthenticated && !args.Target.Location.OriginalString.Contains("LoginPage"))
+        if (!_authService.IsAuthenticated && args.Target != null && !args.Target.Location.OriginalString.Contains("LoginPage"))
         {
-            // Annuler la navigation actuelle et forcer la direction vers LoginPage
+            // Annuler la navigation actuelle
             args.Cancel();
-            await Current.GoToAsync("//LoginPage");
+
+            // Effectuer la redirection de manière asynchrone après l'annulation
+            Dispatcher.Dispatch(async () =>
+            {
+                await Current.GoToAsync("//LoginPage");
+            });
         }
     }
 }

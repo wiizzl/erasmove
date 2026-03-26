@@ -5,33 +5,123 @@
              xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              x:Class="Erasmove.Views.MainPage"
              x:DataType="vm:MainViewModel"
-             Title="Carte">
+             x:Name="CurrentPage"
+             Title="Carte"
+             Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto, *">
-        <Frame Grid.Row="0" Margin="10" Padding="15" CornerRadius="10" HasShadow="True" BackgroundColor="{AppThemeBinding Light=White, Dark=#2C2C2C}">
-            <VerticalStackLayout Spacing="10">
-                <Entry Placeholder="Point de départ (ex: Paris)" Text="{Binding StartPoint}" />
+    <Grid>
+        <!-- Map en fond d'écran remplissant tout l'écran -->
+        <mapsui:MapView x:Name="MapView" 
+                        HorizontalOptions="FillAndExpand" 
+                        VerticalOptions="FillAndExpand" />
 
-                <CollectionView ItemsSource="{Binding Waypoints}" MinimumHeightRequest="0" MaximumHeightRequest="150">
+        <!-- Panneau flottant pour la recherche d'itinéraire superposé sur la carte -->
+        <Frame Margin="20,40,20,0" 
+               Padding="20" 
+               CornerRadius="15" 
+               HasShadow="True" 
+               BackgroundColor="{AppThemeBinding Light=#EEFFFFFF, Dark=#EE2C2C2C}"
+               VerticalOptions="Start"
+               MaximumWidthRequest="400"
+               HorizontalOptions="Center">
+
+            <VerticalStackLayout Spacing="15">
+                <Label Text="Planifier un voyage" 
+                       FontAttributes="Bold" 
+                       FontSize="18" 
+                       HorizontalOptions="Center" 
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+
+                <!-- Départ -->
+                <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Text="📍" VerticalOptions="Center" TextColor="Green" Margin="0,0,10,0"/>
+                        <Entry Placeholder="Point de départ (ex: Paris)" 
+                               Text="{Binding StartPoint}" 
+                               Grid.Column="1" 
+                               ClearButtonVisibility="WhileEditing"
+                               BackgroundColor="Transparent"/>
+                    </Grid>
+                </Frame>
+
+                <!-- Escales dynamiques -->
+                <CollectionView ItemsSource="{Binding Waypoints}" 
+                                MinimumHeightRequest="0" 
+                                MaximumHeightRequest="150"
+                                SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="vm:WaypointModel">
-                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10" Margin="0,5,0,0">
-                                <Entry Placeholder="Escale" Text="{Binding Name}" Grid.Column="0" />
-                                <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=RemoveWaypointCommand}" CommandParameter="{Binding .}" Grid.Column="1" BackgroundColor="Transparent" TextColor="Red" Padding="0" WidthRequest="30" />
-                            </Grid>
+                            <Frame Padding="10,0" Margin="0,0,0,10" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                    <Label Text="⏸️" VerticalOptions="Center" Grid.Column="0" TextColor="Orange"/>
+                                    <Entry Placeholder="Escale" 
+                                           Text="{Binding Name}" 
+                                           Grid.Column="1" 
+                                           ClearButtonVisibility="WhileEditing"
+                                           BackgroundColor="Transparent"/>
+                                    <ImageButton Source="dotnet_bot.png" 
+                                                 Command="{Binding BindingContext.RemoveWaypointCommand, Source={x:Reference CurrentPage}}" 
+                                                 CommandParameter="{Binding .}" 
+                                                 Grid.Column="2" 
+                                                 BackgroundColor="Transparent" 
+                                                 WidthRequest="24" 
+                                                 HeightRequest="24" 
+                                                 VerticalOptions="Center">
+                                        <ImageButton.Source>
+                                            <FontImageSource FontFamily="OpenSansRegular" Glyph="X" Color="Red" Size="16"/>
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </Grid>
+                            </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Button Text="+ Ajouter une escale" Command="{Binding AddWaypointCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" HorizontalOptions="Start" Padding="0" />
+                <Button Text="+ Ajouter une escale" 
+                        Command="{Binding AddWaypointCommand}" 
+                        BackgroundColor="Transparent" 
+                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
+                        HorizontalOptions="Start" 
+                        Padding="0" 
+                        FontSize="14"
+                        FontAttributes="Bold"/>
 
-                <Entry Placeholder="Point d'arrivée (ex: Marseille)" Text="{Binding Destination}" />
+                <!-- Arrivée -->
+                <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Text="🏁" VerticalOptions="Center" TextColor="Red" Margin="0,0,10,0"/>
+                        <Entry Placeholder="Point d'arrivée (ex: Marseille)" 
+                               Text="{Binding Destination}" 
+                               Grid.Column="1" 
+                               ClearButtonVisibility="WhileEditing"
+                               BackgroundColor="Transparent"/>
+                    </Grid>
+                </Frame>
 
-                <Button Text="Rechercher l'itinéraire" Command="{Binding SearchRouteCommand}" CornerRadius="20" Margin="0,10,0,0" />
+                <!-- Bouton de validation -->
+                <Button Text="Rechercher l'itinéraire" 
+                        Command="{Binding SearchRouteCommand}" 
+                        CornerRadius="25" 
+                        Margin="0,10,0,0" 
+                        FontAttributes="Bold"
+                        Shadow="{Shadow Brush=Black, Offset='0,4', Opacity=0.2, Radius=5}"/>
             </VerticalStackLayout>
         </Frame>
 
-        <mapsui:MapView x:Name="MapView" Grid.Row="1" />
+        <!-- Panneau d'informations du trajet (visible uniquement si calculé) -->
+        <Frame VerticalOptions="End" 
+               Margin="20,0,20,30" 
+               Padding="15" 
+               CornerRadius="15" 
+               HasShadow="True"
+               BackgroundColor="{AppThemeBinding Light=#EEFFFFFF, Dark=#EE2C2C2C}"
+               MaximumWidthRequest="400"
+               HorizontalOptions="Center"
+               IsVisible="False"
+               x:Name="RouteInfoFrame">
+            <!-- (Pour plus tard: Résumé de la distance, temps estimé etc.) -->
+            <Label Text="Itinéraire calculé avec succès" HorizontalOptions="Center" FontAttributes="Bold"/>
+        </Frame>
     </Grid>
 
 </ContentPage>

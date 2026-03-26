@@ -80,6 +80,9 @@ public partial class MainPage : ContentPage
             MapView.Map.Navigator.CenterOnAndZoomTo(
                 new MPoint(center.x, center.y),
                 MapView.Map.Navigator.Resolutions[6]);
+
+            // Rendre le panneau d'info visible
+            RouteInfoFrame.IsVisible = true;
         }
     }
 }
