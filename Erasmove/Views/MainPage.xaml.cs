@@ -22,17 +22,17 @@ public partial class MainPage : ContentPage
         _viewModel.OnRouteCalculated += DrawRoute;
     }
 
-    private void DrawRoute(List<Position> routePoints)
+    private void DrawRoute(List<Position> stops, List<RouteSegment> segments, double distanceKm)
     {
         MapView.Pins.Clear();
         MapView.Drawables.Clear();
 
-        if (routePoints == null || routePoints.Count == 0) return;
+        if (stops == null || stops.Count == 0) return;
 
         // Start pin
         MapView.Pins.Add(new Pin(MapView)
         {
-            Position = routePoints[0],
+            Position = stops[0],
             Label = "Départ",
             Color = Colors.Green
         });
@@ -40,49 +40,75 @@ public partial class MainPage : ContentPage
         // Destination pin
         MapView.Pins.Add(new Pin(MapView)
         {
-            Position = routePoints[^1],
+            Position = stops[^1],
             Label = "Arrivée",
             Color = Colors.Red
         });
 
         // Waypoint pins
-        for (int i = 1; i < routePoints.Count - 1; i++)
+        for (int i = 1; i < stops.Count - 1; i++)
         {
             MapView.Pins.Add(new Pin(MapView)
             {
-                Position = routePoints[i],
+                Position = stops[i],
                 Label = $"Escale {i}",
                 Color = Colors.Orange
             });
         }
 
-        // Draw line
-        var route = new Polyline
+        // Draw segments
+        foreach (var seg in segments)
         {
-            StrokeColor = new Color(0.2f, 0.5f, 1.0f),
-            StrokeWidth = 4f
-        };
+            Color strokeColor = Colors.Blue; // Drive
+            if (seg.Mode == TransportMode.Sea) strokeColor = Colors.Red; // Boat
+            if (seg.Mode == TransportMode.Air) strokeColor = Colors.Cyan; // Plane
 
-        foreach (var p in routePoints)
-        {
-            route.Positions.Add(p);
+            var route = new Polyline
+            {
+                StrokeColor = strokeColor,
+                StrokeWidth = 5f
+            };
+
+            foreach (var p in seg.Geometry)
+            {
+                route.Positions.Add(p);
+            }
+
+            MapView.Drawables.Add(route);
         }
 
-        MapView.Drawables.Add(route);
-
         // Center map
-        if (routePoints.Count > 1)
+        if (stops.Count > 1)
         {
-            var centerLat = (routePoints[0].Latitude + routePoints[^1].Latitude) / 2;
-            var centerLon = (routePoints[0].Longitude + routePoints[^1].Longitude) / 2;
+            // Calculate robust bounding box over all segments
+            double minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+
+            foreach (var seg in segments)
+            {
+                foreach(var p in seg.Geometry)
+                {
+                    if(p.Latitude < minLat) minLat = p.Latitude;
+                    if(p.Latitude > maxLat) maxLat = p.Latitude;
+                    if(p.Longitude < minLon) minLon = p.Longitude;
+                    if(p.Longitude > maxLon) maxLon = p.Longitude;
+                }
+            }
+
+            // Fallback if nothing was added
+            if (minLat == 90) { minLat = stops[0].Latitude; maxLat = stops[^1].Latitude; }
+            if (minLon == 180) { minLon = stops[0].Longitude; maxLon = stops[^1].Longitude; }
+
+            var centerLat = (minLat + maxLat) / 2;
+            var centerLon = (minLon + maxLon) / 2;
             var center = Mapsui.Projections.SphericalMercator.FromLonLat(centerLon, centerLat);
 
             MapView.Map.Navigator.CenterOnAndZoomTo(
                 new MPoint(center.x, center.y),
-                MapView.Map.Navigator.Resolutions[6]);
+                MapView.Map.Navigator.Resolutions[5]);
 
-            // Rendre le panneau d'info visible
+            // Rendre le panneau d'info visible et afficher la distance
             RouteInfoFrame.IsVisible = true;
+            DistanceLabel.Text = distanceKm > 0 ? $"Distance totale: {distanceKm:F0} km" : "Itinéraire approximatif";
         }
     }
 }
