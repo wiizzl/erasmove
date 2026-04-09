@@ -22,6 +22,12 @@ public partial class MainPage : ContentPage
         _viewModel.OnRouteCalculated += DrawRoute;
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.InitializeData();
+    }
+
     private void DrawRoute(List<Position> stops, List<RouteSegment> segments, double distanceKm)
     {
         MapView.Pins.Clear();
@@ -59,9 +65,15 @@ public partial class MainPage : ContentPage
         // Draw segments
         foreach (var seg in segments)
         {
-            Color strokeColor = Colors.Blue; // Drive
-            if (seg.Mode == TransportMode.Sea) strokeColor = Colors.Red; // Boat
-            if (seg.Mode == TransportMode.Air) strokeColor = Colors.Cyan; // Plane
+            Color strokeColor = Colors.Gray; // Drive par défaut
+
+            switch (seg.Mode)
+            {
+                case TransportMode.Drive: strokeColor = Colors.DarkGray; break; // Voiture = Gris foncé
+                case TransportMode.Sea: strokeColor = Colors.DeepSkyBlue; break; // Bateau = Bleu ciel
+                case TransportMode.Air: strokeColor = Colors.Magenta; break; // Avion = Magenta / Rose
+                case TransportMode.Train: strokeColor = Colors.Orange; break; // Train = Orange
+            }
 
             var route = new Polyline
             {

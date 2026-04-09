@@ -2,93 +2,186 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
-             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
-             x:Class="Erasmove.Views.MainPage"
-             x:DataType="vm:MainViewModel"
-             x:Name="CurrentPage"
-             Title="Carte"
-             Shell.NavBarIsVisible="False">
+                  xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
+                      x:Class="Erasmove.Views.MainPage"
+                      x:DataType="vm:MainViewModel"
+                      x:Name="CurrentPage"
+                      Title="Carte"
+                      Shell.NavBarIsVisible="False">
 
-    <Grid ColumnDefinitions="350, *" RowDefinitions="*">
+             <ContentPage.Resources>
+                 <ResourceDictionary>
+                     <vm:CountToHeightConverter x:Key="CountToHeightConverter" />
+                     <vm:CountToBoolConverter x:Key="CountToBoolConverter" />
+                 </ResourceDictionary>
+             </ContentPage.Resources>
+
+             <Grid ColumnDefinitions="350, *" RowDefinitions="*">
         <!-- Panneau de navigation à gauche -->
         <Grid Grid.Column="0" RowDefinitions="Auto, *, Auto" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
-            <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20">
-                <Label Text="Planifier un voyage" 
+            <!-- SECTION MANAGER : DÉTAILS ET CRÉATION -->
+            <ScrollView Grid.Row="0" Grid.RowSpan="2" IsVisible="{Binding IsManager}">
+                <VerticalStackLayout Spacing="15" Padding="20">
+                    <Label Text="Planifier un voyage" 
+                           FontAttributes="Bold" 
+                           FontSize="22" 
+                           HorizontalOptions="Start" 
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+
+                    <!-- Trajet -->
+                    <Label Text="Trajet :" FontAttributes="Bold" FontSize="14" />
+
+                    <!-- Départ Autocomplétion -->
+                    <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Text="📍" VerticalOptions="Center" TextColor="Green" Margin="0,0,10,0"/>
+                            <Entry Placeholder="Point de départ (ex: Paris)" 
+                                   Text="{Binding StartPoint, Mode=TwoWay}" 
+                                   Grid.Column="1" 
+                                   ClearButtonVisibility="WhileEditing"
+                                   BackgroundColor="Transparent"/>
+                        </Grid>
+                    </Frame>
+                    <CollectionView ItemsSource="{Binding StartCitySuggestions}" HeightRequest="{Binding StartCitySuggestions.Count, Converter={StaticResource CountToHeightConverter}}" MaximumHeightRequest="150" IsVisible="{Binding StartCitySuggestions.Count, Converter={StaticResource CountToBoolConverter}}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <ContentView>
+                                    <ContentView.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectStartCityCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}"/>
+                                    </ContentView.GestureRecognizers>
+                                    <Label Text="{Binding .}" Padding="10" BackgroundColor="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" Margin="0,1"/>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <CollectionView ItemsSource="{Binding Waypoints}" 
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:WaypointModel">
+                                <Frame Padding="10,0" Margin="0,0,0,10" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
+                                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                        <Label Text="⏸️" VerticalOptions="Center" Grid.Column="0" TextColor="Orange"/>
+                                        <Entry Placeholder="Escale" 
+                                               Text="{Binding Name}" 
+                                               Grid.Column="1" 
+                                               ClearButtonVisibility="WhileEditing"
+                                               BackgroundColor="Transparent"/>
+                                        <ImageButton Command="{Binding BindingContext.RemoveWaypointCommand, Source={x:Reference CurrentPage}}" 
+                                                     CommandParameter="{Binding .}" 
+                                                     Grid.Column="2" 
+                                                     BackgroundColor="Transparent" 
+                                                     WidthRequest="24" 
+                                                     HeightRequest="24" 
+                                                     VerticalOptions="Center">
+                                            <ImageButton.Source>
+                                                <FontImageSource FontFamily="OpenSansRegular" Glyph="X" Color="Red" Size="16"/>
+                                            </ImageButton.Source>
+                                        </ImageButton>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="+ Ajouter une escale" 
+                            Command="{Binding AddWaypointCommand}" 
+                            BackgroundColor="Transparent" 
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
+                            HorizontalOptions="Start" 
+                            Padding="0" 
+                            FontSize="14"
+                            FontAttributes="Bold"/>
+
+                    <!-- Arrivée Autocomplétion -->
+                    <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Text="🏁" VerticalOptions="Center" TextColor="Red" Margin="0,0,10,0"/>
+                            <Entry Placeholder="Point d'arrivée (ex: Marseille)" 
+                                   Text="{Binding Destination, Mode=TwoWay}" 
+                                   Grid.Column="1" 
+                                   ClearButtonVisibility="WhileEditing"
+                                   BackgroundColor="Transparent"/>
+                        </Grid>
+                    </Frame>
+                    <CollectionView ItemsSource="{Binding EndCitySuggestions}" HeightRequest="{Binding EndCitySuggestions.Count, Converter={StaticResource CountToHeightConverter}}" MaximumHeightRequest="150" IsVisible="{Binding EndCitySuggestions.Count, Converter={StaticResource CountToBoolConverter}}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <ContentView>
+                                    <ContentView.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectEndCityCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}"/>
+                                    </ContentView.GestureRecognizers>
+                                    <Label Text="{Binding .}" Padding="10" BackgroundColor="{AppThemeBinding Light=#EEEEEE, Dark=#333333}" Margin="0,1"/>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" Margin="0,10" />
+
+                    <!-- Détails (date, etc.) -->
+                    <Label Text="Détails du Départ :" FontAttributes="Bold" FontSize="14" />
+                    <DatePicker Date="{Binding DepartureDate}" MinimumDate="{Binding DepartureDate}" />
+                    <TimePicker Time="{Binding DepartureTime}" />
+
+                    <Label Text="Nom du voyage (Optionnel) :" FontAttributes="Bold" FontSize="14" Margin="0,10,0,0"/>
+                    <Entry Placeholder="Ex: Mon beau voyage" Text="{Binding TripName}" />
+
+                    <Label Text="Assigner à : " FontAttributes="Bold" FontSize="14" Margin="0,10,0,0"/>
+                    <Picker Title="Choisir un utilisateur" ItemsSource="{Binding Travelers}" ItemDisplayBinding="{Binding FirstName}" SelectedItem="{Binding SelectedTraveler}" />
+
+                    <!-- Bouton de validation -->
+                    <Button Text="Calculer et Enregistrer" 
+                            Command="{Binding SearchRouteCommand}" 
+                            CornerRadius="25" 
+                            Margin="0,10,0,20" 
+                            FontAttributes="Bold"
+                            Shadow="{Shadow Brush=Black, Offset='0,4', Opacity=0.2, Radius=5}"/>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- SECTION EMPLOYÉ (USER) : LISTE DES VOYAGES ASSIGNÉS -->
+            <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20" IsVisible="{Binding IsNotManager}">
+                <Label Text="Vos voyages assignés" 
                        FontAttributes="Bold" 
                        FontSize="22" 
                        HorizontalOptions="Start" 
                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
 
-                <!-- Départ -->
-                <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Text="📍" VerticalOptions="Center" TextColor="Green" Margin="0,0,10,0"/>
-                        <Entry Placeholder="Point de départ (ex: Paris)" 
-                               Text="{Binding StartPoint}" 
-                               Grid.Column="1" 
-                               ClearButtonVisibility="WhileEditing"
-                               BackgroundColor="Transparent"/>
-                    </Grid>
-                </Frame>
+                <Picker Title="Sélectionnez un voyage" 
+                        ItemsSource="{Binding AssignedTrips}" 
+                        ItemDisplayBinding="{Binding TripName}" 
+                        SelectedItem="{Binding SelectedAssignedTrip}" />
 
-                <!-- Escales dynamiques -->
-                <CollectionView ItemsSource="{Binding Waypoints}" 
-                                SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="vm:WaypointModel">
-                            <Frame Padding="10,0" Margin="0,0,0,10" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
-                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                                    <Label Text="⏸️" VerticalOptions="Center" Grid.Column="0" TextColor="Orange"/>
-                                    <Entry Placeholder="Escale" 
-                                           Text="{Binding Name}" 
-                                           Grid.Column="1" 
-                                           ClearButtonVisibility="WhileEditing"
-                                           BackgroundColor="Transparent"/>
-                                    <ImageButton Command="{Binding BindingContext.RemoveWaypointCommand, Source={x:Reference CurrentPage}}" 
-                                                 CommandParameter="{Binding .}" 
-                                                 Grid.Column="2" 
-                                                 BackgroundColor="Transparent" 
-                                                 WidthRequest="24" 
-                                                 HeightRequest="24" 
-                                                 VerticalOptions="Center">
-                                        <ImageButton.Source>
-                                            <FontImageSource FontFamily="OpenSansRegular" Glyph="X" Color="Red" Size="16"/>
-                                        </ImageButton.Source>
-                                    </ImageButton>
+                <StackLayout IsVisible="{Binding IsTripSelected}" Spacing="5" Margin="0,15,0,0">
+                    <Label Text="{Binding SelectedAssignedTrip.TripName}" FontAttributes="Bold" FontSize="18" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                    <Label Text="{Binding SelectedAssignedTrip.DurationText, StringFormat='Temps de transport total : {0} h'}" FontSize="14"/>
+
+                    <BoxView HeightRequest="1" Color="Gray" Margin="0,10"/>
+                    <Label Text="Feuille de route détaillée :" FontAttributes="Bold"/>
+                    <CollectionView ItemsSource="{Binding ItineraryTimeline}"  HeightRequest="250">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:TimelineStep">
+                                <Grid ColumnDefinitions="Auto, *" Margin="0,5" ColumnSpacing="10">
+                                    <VerticalStackLayout Grid.Column="0" WidthRequest="60" HorizontalOptions="Center">
+                                        <Label Text="{Binding Icon}" FontSize="24" HorizontalOptions="Center"/>
+                                        <Label Text="{Binding Time}" FontSize="12" HorizontalOptions="Center" FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Label Text="{Binding Description}" FontSize="14" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Detail}" FontSize="12" TextColor="Gray"/>
+                                    </VerticalStackLayout>
                                 </Grid>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
 
-                <Button Text="+ Ajouter une escale" 
-                        Command="{Binding AddWaypointCommand}" 
-                        BackgroundColor="Transparent" 
-                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" 
-                        HorizontalOptions="Start" 
-                        Padding="0" 
-                        FontSize="14"
-                        FontAttributes="Bold"/>
-
-                <!-- Arrivée -->
-                <Frame Padding="10,0" CornerRadius="8" HasShadow="False" BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" BackgroundColor="{AppThemeBinding Light=#F8F8F8, Dark=#2C2C2C}">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Text="🏁" VerticalOptions="Center" TextColor="Red" Margin="0,0,10,0"/>
-                        <Entry Placeholder="Point d'arrivée (ex: Marseille)" 
-                               Text="{Binding Destination}" 
-                               Grid.Column="1" 
-                               ClearButtonVisibility="WhileEditing"
-                               BackgroundColor="Transparent"/>
-                    </Grid>
-                </Frame>
-
-                <!-- Bouton de validation -->
-                <Button Text="Rechercher l'itinéraire" 
-                        Command="{Binding SearchRouteCommand}" 
+                <Button Text="Voir sur la carte" 
+                        Command="{Binding LoadTripCommand}" 
                         CornerRadius="25" 
-                        Margin="0,10,0,0" 
-                        FontAttributes="Bold"
-                        Shadow="{Shadow Brush=Black, Offset='0,4', Opacity=0.2, Radius=5}"/>
+                        Margin="0,20,0,0" 
+                        FontAttributes="Bold"/>
             </VerticalStackLayout>
 
             <!-- Panneau d'informations du trajet (visible uniquement si calculé) -->

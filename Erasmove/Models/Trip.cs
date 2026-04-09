@@ -13,4 +13,11 @@ public class Trip
     public Traveler Traveler { get; set; }
     public Place Place { get; set; }
     public Transport Transport { get; set; }
+
+    // Nouveaux champs pour affichage des détails
+    public string StartCity { get; set; } = string.Empty;
+    public string EndCity { get; set; } = string.Empty;
+    public string DurationText { get; set; } = string.Empty;
+    public string TripName { get; set; } = string.Empty;
+    public string WaypointsJson { get; set; } = string.Empty;
 }
