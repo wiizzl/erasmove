@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Erasmove.ViewModels"
+             x:Class="Erasmove.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
+        <Label
+            Text="Bienvenue sur Erasmove"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1" />
+        
+        <Entry Placeholder="Identifiant" Text="{Binding Login}" />
+        <Entry Placeholder="Mot de passe" Text="{Binding Password}" />
+        
+        <Button Text="Se connecter" Command="{Binding LoginCommand}" />
+        
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" />
+        
+        <Label Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" />
+    </VerticalStackLayout>
+
+</ContentPage>

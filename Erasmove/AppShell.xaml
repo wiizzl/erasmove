@@ -4,23 +4,29 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Erasmove.Views"
-    xmlns:vm="clr-namespace:Erasmove.ViewModels"
-    x:DataType="vm:AppShellViewModel"
-    Title="Erasmove">
-    
-    <ShellContent
-        Route="LoginPage"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        FlyoutItemIsVisible="False"
-        Shell.FlyoutBehavior="Disabled"
-        Shell.NavBarIsVisible="False" />
+    Title="Erasmove"
+    Shell.FlyoutBehavior="Disabled">
 
-    <FlyoutItem Title="Accueil">
-        <ShellContent
-            Route="MainPage"
-            ContentTemplate="{DataTemplate views:MainPage}" />
-    </FlyoutItem>
+    <ShellContent Route="Login" ContentTemplate="{DataTemplate views:LoginView}" />
     
-    <MenuItem Text="Déconnexion" Command="{Binding LogoutCommand}" />
+    <TabBar Route="Admin">
+        <Tab Title="Lieux">
+            <ShellContent ContentTemplate="{DataTemplate views:LieuCatalogView}" />
+        </Tab>
+        <Tab Title="Transports">
+            <ShellContent ContentTemplate="{DataTemplate views:TransportCatalogView}" />
+        </Tab>
+        <Tab Title="Trajets">
+            <ShellContent ContentTemplate="{DataTemplate views:TrajetCatalogView}" />
+        </Tab>
+        <Tab Title="Voyages">
+            <ShellContent ContentTemplate="{DataTemplate views:VoyageCatalogView}" />
+        </Tab>
+        <Tab Title="Utilisateurs">
+            <ShellContent ContentTemplate="{DataTemplate views:UtilisateurCatalogView}" />
+        </Tab>
+    </TabBar>
+    
+    <ShellContent Route="Home" ContentTemplate="{DataTemplate views:HomeView}" />
 
 </Shell>

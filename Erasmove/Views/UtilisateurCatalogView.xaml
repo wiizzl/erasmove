@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Erasmove.Models"
+             xmlns:vm="clr-namespace:Erasmove.ViewModels"
+             x:Class="Erasmove.Views.UtilisateurCatalogView"
+             x:DataType="vm:UtilisateurCatalogViewModel">
+
+    <Grid RowDefinitions="*, Auto" Padding="10">
+        <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Items}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Utilisateur">
+                        <HorizontalStackLayout Spacing="10" Padding="5">
+                            <Label Text="{Binding Nom}" FontAttributes="Bold" />
+                            <Label Text="{Binding Prenom}" />
+                            <Label Text="{Binding RoleLibelle}" TextColor="Gray" />
+                            <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Button Grid.Row="1" Text="Ajouter Utilisateur" Command="{Binding GoToAddPageCommand}" />
+    </Grid>
+
+</ContentPage>

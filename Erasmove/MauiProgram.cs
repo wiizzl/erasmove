@@ -1,9 +1,6 @@
-﻿using Erasmove.Database;
-using Erasmove.Repositories;
-using Erasmove.Services;
+﻿using Erasmove.Services;
 using Erasmove.ViewModels;
 using Erasmove.Views;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
@@ -22,38 +19,49 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
-        
-        string connectionString = new SqlConnectionStringBuilder()
-        {
-            DataSource = "localhost",
-            InitialCatalog = "CHL_ERASMOVE",
-            UserID = "sa",
-            Password = "SuperMotDePasse!123",
-            TrustServerCertificate = true
-        }.ConnectionString;
-        
-        builder.Services.AddSingleton(new DatabaseHelper(connectionString));
 
-        builder.Services.AddTransient<AccountRepository>();
-        builder.Services.AddTransient<PlaceRepository>();
-        builder.Services.AddTransient<TransportRepository>();
-        builder.Services.AddTransient<TravelerRepository>();
-        builder.Services.AddTransient<TripRepository>();
-
-        builder.Services.AddSingleton<AuthService>();
-        
         builder.Services.AddSingleton<AppShell>();
         
-        builder.Services.AddSingleton<AppShellViewModel>();
-        builder.Services.AddSingleton<LoginViewModel>();
-        builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<DatabaseService>();
+    
+        builder.Services.AddSingleton<LieuService>();
+        builder.Services.AddSingleton<TransportService>();
+        builder.Services.AddSingleton<UtilisateurService>();
+        builder.Services.AddSingleton<TrajetService>();
+        builder.Services.AddSingleton<VoyageService>();
         
-        builder.Services.AddSingleton<LoginPage>();
-        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<LoginView>();
+        
+        builder.Services.AddTransient<LieuCatalogViewModel>();
+        builder.Services.AddTransient<LieuCatalogView>();
+        builder.Services.AddTransient<AddLieuViewModel>();
+        builder.Services.AddTransient<AddLieuView>();
+
+        builder.Services.AddTransient<TransportCatalogViewModel>();
+        builder.Services.AddTransient<TransportCatalogView>();
+        builder.Services.AddTransient<AddTransportViewModel>();
+        builder.Services.AddTransient<AddTransportView>();
+
+        builder.Services.AddTransient<UtilisateurCatalogViewModel>();
+        builder.Services.AddTransient<UtilisateurCatalogView>();
+        builder.Services.AddTransient<AddUtilisateurViewModel>();
+        builder.Services.AddTransient<AddUtilisateurView>();
+
+        builder.Services.AddTransient<TrajetCatalogViewModel>();
+        builder.Services.AddTransient<TrajetCatalogView>();
+        builder.Services.AddTransient<AddTrajetViewModel>();
+        builder.Services.AddTransient<AddTrajetView>();
+
+        builder.Services.AddTransient<VoyageCatalogViewModel>();
+        builder.Services.AddTransient<VoyageCatalogView>();
+        builder.Services.AddTransient<AddVoyageViewModel>();
+        builder.Services.AddTransient<AddVoyageView>();
 
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+
         return builder.Build();
     }
 }

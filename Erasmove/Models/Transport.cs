@@ -1,11 +1,9 @@
 namespace Erasmove.Models;
 
-public class Transport
+public class Transport : IEntity
 {
     public int Id { get; set; }
-    public string Company { get; set; } = string.Empty;
-    public string Reference { get; set; } = string.Empty;
-    public int TransportTypeId { get; set; }
-
-    public TransportType? TransportType { get; set; }
+    public string Compagnie { get; set; } = string.Empty;
+    public int TypeId { get; set; }
+    public string TypeLibelle { get; set; } = string.Empty;
 }

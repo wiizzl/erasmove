@@ -1,70 +1,68 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Erasmove.Repositories;
 using Erasmove.Services;
 
 namespace Erasmove.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly AccountRepository _accountRepository;
-    private readonly AuthService _authService;
+    private readonly UtilisateurService _utilisateurService;
 
-    [ObservableProperty]
-    private string _email;
+    [ObservableProperty] public partial string Login { get; set; } = string.Empty;
+    [ObservableProperty] public partial string Password { get; set; } = string.Empty;
+    [ObservableProperty] public partial string ErrorMessage { get; set; } = string.Empty;
 
-    [ObservableProperty]
-    private string _password;
+    [ObservableProperty] public partial bool IsBusy { get; set; }
 
-    [ObservableProperty]
-    private string _errorMessage;
-
-    [ObservableProperty]
-    private bool _isLoading;
-
-    public LoginViewModel(AccountRepository accountRepository, AuthService authService)
+    public LoginViewModel(UtilisateurService utilisateurService)
     {
-        _accountRepository = accountRepository;
-        _authService = authService;
+        _utilisateurService = utilisateurService;
     }
 
     [RelayCommand]
-    public async Task LoginAsync()
+    private async Task LoginAsync()
     {
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        if (IsBusy)
         {
-            ErrorMessage = "Veuillez renseigner votre email et votre mot de passe.";
             return;
         }
 
-        IsLoading = true;
-        ErrorMessage = string.Empty;
+        if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Veuillez saisir vos identifiants.";
+            return;
+        }
 
         try
         {
-            var account = await _accountRepository.GetAccountByEmailAsync(Email);
-            
-            if (account != null && account.Password == Password) 
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+
+            var user = await _utilisateurService.AuthenticateAsync(Login, Password);
+
+            if (user != null)
             {
-                _authService.Login(account);
-                
-                await Shell.Current.GoToAsync("//MainPage");
-                
-                Email = string.Empty;
-                Password = string.Empty;
+                if (user.IsAdmin)
+                {
+                    await Shell.Current.GoToAsync("//Admin");
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//Home");
+                }
             }
             else
             {
-                ErrorMessage = "Email ou mot de passe incorrect.";
+                ErrorMessage = "Identifiant ou mot de passe incorrect.";
             }
         }
-        catch (Exception ex)
+        catch
         {
-            ErrorMessage = $"Erreur de connexion à la base de données. {ex.Message}";
+            ErrorMessage = "Erreur de connexion au serveur.";
         }
         finally
         {
-            IsLoading = false;
+            IsBusy = false;
         }
     }
 }

@@ -8,11 +8,11 @@
 
   <Identity Name="maui-package-name-placeholder" Publisher="CN=User Name" Version="0.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="BA5CA3DE-9B18-4118-A4E5-07BD88EB6A4B" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="F06E3894-4E00-4731-B9D7-7A2A5B64D475" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>$placeholder$</DisplayName>
-    <PublisherDisplayName>User Name</PublisherDisplayName>
+    <PublisherDisplayName>CHL</PublisherDisplayName>
     <Logo>$placeholder$.png</Logo>
   </Properties>
 
