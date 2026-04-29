@@ -49,6 +49,51 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         }
     }
 
+    [RelayCommand]
+    public async Task CalculerItineraireAsync()
+    {
+        if (SelectedDepart == null || SelectedArrivee == null)
+        {
+            await Shell.Current.DisplayAlertAsync("Erreur", "Veuillez sélectionner les villes de départ et d'arrivée.", "OK");
+            return;
+        }
+
+        if (SelectedDepart.Id == SelectedArrivee.Id)
+        {
+            await Shell.Current.DisplayAlertAsync("Erreur", "Les villes de départ et d'arrivée doivent être différentes.", "OK");
+            return;
+        }
+
+        ItineraireCalcule.Clear();
+        HasResult = false;
+
+        try
+        {
+            IsBusy = true;
+            var path = await _trajetService.FindBestPathAsync(SelectedDepart.Id, SelectedArrivee.Id);
+
+            if (path != null)
+            {
+                foreach (var trajet in path)
+                    ItineraireCalcule.Add(trajet);
+
+                HasResult = true;
+            }
+            else
+            {
+                await Shell.Current.DisplayAlertAsync("Info", "Aucun itinéraire trouvé entre ces deux villes.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Erreur", $"Impossible de calculer l'itinéraire : {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     protected override bool ValidateForm()
     {
         return SelectedUtilisateur != null && HasResult && ItineraireCalcule.Count > 0;
@@ -56,6 +101,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
 
     protected override async Task ExecuteSaveAsync()
     {
-        
+        var libelle = $"{SelectedDepart!.Ville} → {SelectedArrivee!.Ville}";
+        await _voyageService.SaveItineraireCalculeAsync(libelle, SelectedUtilisateur!.Id, [.. ItineraireCalcule]);
     }
 }
