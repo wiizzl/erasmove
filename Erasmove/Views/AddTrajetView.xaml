@@ -18,7 +18,7 @@
 
         <Picker Title="Transport" 
                 ItemsSource="{Binding Transports}" 
-                ItemDisplayBinding="{Binding CompagnieTransport}" 
+                ItemDisplayBinding="{Binding Compagnie}" 
                 SelectedItem="{Binding SelectedTransport}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />

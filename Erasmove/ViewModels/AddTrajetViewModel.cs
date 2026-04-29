@@ -33,9 +33,9 @@ public partial class AddTrajetViewModel : BaseAddViewModel
         var transports = await _transportService.GetAllAsync();
 
         Lieux.Clear();
-        foreach (var l in lieux)
+        foreach (var lieu in lieux)
         {
-            Lieux.Add(l);
+            Lieux.Add(lieu);
         }
 
         Transports.Clear();
