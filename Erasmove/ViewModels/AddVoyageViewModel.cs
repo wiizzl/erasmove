@@ -3,15 +3,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class AddVoyageViewModel : BaseAddViewModel
 {
-    private readonly VoyageService _voyageService;
-    private readonly TrajetService _trajetService;
-    private readonly LieuService _lieuService;
-    private readonly UtilisateurService _utilisateurService;
+    private readonly IVoyageService _voyageService;
+    private readonly ITrajetService _trajetService;
+    private readonly ILieuService _lieuService;
+    private readonly IUtilisateurService _utilisateurService;
 
     [ObservableProperty] public partial Lieu? SelectedDepart { get; set; }
     [ObservableProperty] public partial Lieu? SelectedArrivee { get; set; }
@@ -22,7 +24,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     public ObservableCollection<Utilisateur> Utilisateurs { get; } = [];
     public ObservableCollection<Trajet> ItineraireCalcule { get; } = [];
 
-    public AddVoyageViewModel(VoyageService voyageService, TrajetService trajetService, LieuService lieuService, UtilisateurService utilisateurService)
+    public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService, IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
     {
         _voyageService = voyageService;
         _trajetService = trajetService;
@@ -56,6 +58,6 @@ public partial class AddVoyageViewModel : BaseAddViewModel
 
     protected override async Task ExecuteSaveAsync()
     {
-        
+
     }
 }

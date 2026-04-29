@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class AddUtilisateurViewModel : BaseAddViewModel
 {
-    private readonly UtilisateurService _utilisateurService;
+    private readonly IUtilisateurService _utilisateurService;
 
     [ObservableProperty] public partial string Nom { get; set; } = string.Empty;
     [ObservableProperty] public partial string Prenom { get; set; } = string.Empty;
@@ -18,7 +20,7 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
 
     public ObservableCollection<Role> Roles { get; } = [];
 
-    public AddUtilisateurViewModel(UtilisateurService utilisateurService)
+    public AddUtilisateurViewModel(IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
     {
         _utilisateurService = utilisateurService;
     }

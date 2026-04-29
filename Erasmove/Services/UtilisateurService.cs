@@ -1,11 +1,12 @@
 using System.Data;
 using Erasmove.Helpers;
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
 
-public class UtilisateurService : BaseCrudService<Utilisateur>
+public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurService
 {
     protected override string GetListProcedure => "PSS_UTILISATEUR";
     protected override string DeleteProcedure => "PSD_UTILISATEUR";
@@ -37,7 +38,7 @@ public class UtilisateurService : BaseCrudService<Utilisateur>
         var users = await Db.ExecuteQueryAsync("PSS_UTILISATEUR_LOGIN", MapEntity, parameters);
         return users.FirstOrDefault();
     }
-    
+
     public async Task<List<Role>> GetRolesAsync()
     {
         return await Db.ExecuteQueryAsync("PSS_ROLE", reader => new Role

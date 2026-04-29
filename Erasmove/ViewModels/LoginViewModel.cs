@@ -1,12 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
 
 namespace Erasmove.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly UtilisateurService _utilisateurService;
+    private readonly IUtilisateurService _utilisateurService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty] public partial string Login { get; set; } = string.Empty;
     [ObservableProperty] public partial string Password { get; set; } = string.Empty;
@@ -14,9 +16,10 @@ public partial class LoginViewModel : ObservableObject
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
 
-    public LoginViewModel(UtilisateurService utilisateurService)
+    public LoginViewModel(IUtilisateurService utilisateurService, INavigationService navigationService)
     {
         _utilisateurService = utilisateurService;
+        _navigationService = navigationService;
     }
 
     [RelayCommand]
@@ -44,11 +47,11 @@ public partial class LoginViewModel : ObservableObject
             {
                 if (user.IsAdmin)
                 {
-                    await Shell.Current.GoToAsync("//Admin");
+                    await _navigationService.GoToAsync("//Admin");
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("//Home");
+                    await _navigationService.GoToAsync("//Home");
                 }
             }
             else

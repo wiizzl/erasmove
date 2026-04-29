@@ -1,4 +1,5 @@
 ﻿using Erasmove.Services;
+using Erasmove.Services.Interfaces;
 using Erasmove.ViewModels;
 using Erasmove.Views;
 using Microsoft.Extensions.Logging;
@@ -21,42 +22,43 @@ public static class MauiProgram
             });
 
         builder.Services.AddSingleton<AppShell>();
-        
+
         builder.Services.AddSingleton<DatabaseService>();
-    
-        builder.Services.AddSingleton<LieuService>();
-        builder.Services.AddSingleton<TransportService>();
-        builder.Services.AddSingleton<UtilisateurService>();
-        builder.Services.AddSingleton<TrajetService>();
-        builder.Services.AddSingleton<VoyageService>();
-        
-        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddSingleton<INavigationService, NavigationService>();
+
+        builder.Services.AddSingleton<ILieuService, LieuService>();
+        builder.Services.AddSingleton<ITransportService, TransportService>();
+        builder.Services.AddSingleton<IUtilisateurService, UtilisateurService>();
+        builder.Services.AddSingleton<ITrajetService, TrajetService>();
+        builder.Services.AddSingleton<IVoyageService, VoyageService>();
+
         builder.Services.AddTransient<LoginView>();
-        
-        builder.Services.AddTransient<LieuCatalogViewModel>();
+        builder.Services.AddTransient<LoginViewModel>();
+
         builder.Services.AddTransient<LieuCatalogView>();
-        builder.Services.AddTransient<AddLieuViewModel>();
+        builder.Services.AddTransient<LieuCatalogViewModel>();
         builder.Services.AddTransient<AddLieuView>();
+        builder.Services.AddTransient<AddLieuViewModel>();
 
-        builder.Services.AddTransient<TransportCatalogViewModel>();
         builder.Services.AddTransient<TransportCatalogView>();
-        builder.Services.AddTransient<AddTransportViewModel>();
+        builder.Services.AddTransient<TransportCatalogViewModel>();
         builder.Services.AddTransient<AddTransportView>();
+        builder.Services.AddTransient<AddTransportViewModel>();
 
-        builder.Services.AddTransient<UtilisateurCatalogViewModel>();
         builder.Services.AddTransient<UtilisateurCatalogView>();
-        builder.Services.AddTransient<AddUtilisateurViewModel>();
+        builder.Services.AddTransient<UtilisateurCatalogViewModel>();
         builder.Services.AddTransient<AddUtilisateurView>();
+        builder.Services.AddTransient<AddUtilisateurViewModel>();
 
-        builder.Services.AddTransient<TrajetCatalogViewModel>();
         builder.Services.AddTransient<TrajetCatalogView>();
-        builder.Services.AddTransient<AddTrajetViewModel>();
+        builder.Services.AddTransient<TrajetCatalogViewModel>();
         builder.Services.AddTransient<AddTrajetView>();
+        builder.Services.AddTransient<AddTrajetViewModel>();
 
-        builder.Services.AddTransient<VoyageCatalogViewModel>();
         builder.Services.AddTransient<VoyageCatalogView>();
-        builder.Services.AddTransient<AddVoyageViewModel>();
+        builder.Services.AddTransient<VoyageCatalogViewModel>();
         builder.Services.AddTransient<AddVoyageView>();
+        builder.Services.AddTransient<AddVoyageViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

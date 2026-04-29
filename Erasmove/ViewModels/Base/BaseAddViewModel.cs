@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Services;
 
-namespace Erasmove.ViewModels;
+namespace Erasmove.ViewModels.Base;
 
 public abstract partial class BaseAddViewModel : ObservableObject
 {

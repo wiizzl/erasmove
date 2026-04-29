@@ -3,14 +3,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class AddTrajetViewModel : BaseAddViewModel
 {
-    private readonly TrajetService _trajetService;
-    private readonly LieuService _lieuService;
-    private readonly TransportService _transportService;
+    private readonly ITrajetService _trajetService;
+    private readonly ILieuService _lieuService;
+    private readonly ITransportService _transportService;
 
     [ObservableProperty] public partial Lieu? SelectedDepart { get; set; }
     [ObservableProperty] public partial Lieu? SelectedArrivee { get; set; }
@@ -19,7 +21,7 @@ public partial class AddTrajetViewModel : BaseAddViewModel
     public ObservableCollection<Lieu> Lieux { get; } = [];
     public ObservableCollection<Transport> Transports { get; } = [];
 
-    public AddTrajetViewModel(TrajetService trajetService, LieuService lieuService, TransportService transportService)
+    public AddTrajetViewModel(ITrajetService trajetService, ILieuService lieuService, ITransportService transportService, INavigationService navigationService) : base(navigationService)
     {
         _trajetService = trajetService;
         _lieuService = lieuService;
@@ -61,7 +63,7 @@ public partial class AddTrajetViewModel : BaseAddViewModel
             LieuArriveeId = SelectedArrivee!.Id,
             TransportId = SelectedTransport!.Id
         };
-        
+
         await _trajetService.AddTrajetAsync(trajet);
     }
 }

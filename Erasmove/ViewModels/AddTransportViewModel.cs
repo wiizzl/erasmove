@@ -3,19 +3,21 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class AddTransportViewModel : BaseAddViewModel
 {
-    private readonly TransportService _transportService;
+    private readonly ITransportService _transportService;
 
     [ObservableProperty] public partial string Compagnie { get; set; } = string.Empty;
     [ObservableProperty] public partial TypeTransport? SelectedType { get; set; }
 
     public ObservableCollection<TypeTransport> Types { get; } = [];
 
-    public AddTransportViewModel(TransportService transportService)
+    public AddTransportViewModel(ITransportService transportService, INavigationService navigationService) : base(navigationService)
     {
         _transportService = transportService;
     }
@@ -43,7 +45,7 @@ public partial class AddTransportViewModel : BaseAddViewModel
             Compagnie = Compagnie,
             TypeId = SelectedType!.Id
         };
-        
+
         await _transportService.AddTransportAsync(transport);
     }
 }

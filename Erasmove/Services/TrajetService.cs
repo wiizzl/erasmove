@@ -1,10 +1,11 @@
 using System.Data;
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
 
-public class TrajetService : BaseCrudService<Trajet>
+public class TrajetService : BaseCrudService<Trajet>, ITrajetService
 {
     protected override string GetListProcedure => "PSS_TRAJET";
     protected override string DeleteProcedure => "PSD_TRAJET";
@@ -20,7 +21,7 @@ public class TrajetService : BaseCrudService<Trajet>
             LieuDepartId = (int)reader["LIE_ID_DEPART"],
             LieuArriveeId = (int)reader["LIE_ID_ARRIVEE"],
             TransportId = (int)reader["TRA_ID"],
-            
+
             VilleDepart = (string)reader["VILLE_DEPART"],
             PaysDepart = (string)reader["PAYS_DEPART"],
             VilleArrivee = (string)reader["VILLE_ARRIVEE"],
@@ -64,8 +65,8 @@ public class TrajetService : BaseCrudService<Trajet>
                 return currentPath;
             }
 
-            var nextSteps = allSegments.Where(t => 
-                t.LieuDepartId == lastSegment.LieuArriveeId && 
+            var nextSteps = allSegments.Where(t =>
+                t.LieuDepartId == lastSegment.LieuArriveeId &&
                 currentPath.All(p => p.LieuDepartId != t.LieuArriveeId));
 
             foreach (var step in nextSteps)
@@ -74,7 +75,7 @@ public class TrajetService : BaseCrudService<Trajet>
                 pathQueue.Enqueue(newPath);
             }
         }
-        
+
         return null;
     }
 }

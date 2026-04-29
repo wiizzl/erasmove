@@ -1,11 +1,13 @@
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class LieuCatalogViewModel : BaseCatalogViewModel<Lieu>
 {
-    public LieuCatalogViewModel(LieuService service) : base(service, "AddLieu")
+    public LieuCatalogViewModel(ILieuService service, INavigationService navigationService) : base(service, navigationService, "AddLieu")
     {
     }
 }

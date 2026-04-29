@@ -1,10 +1,11 @@
 using System.Data;
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
 
-public class VoyageService : BaseCrudService<Voyage>
+public class VoyageService : BaseCrudService<Voyage>, IVoyageService
 {
     protected override string GetListProcedure => "PSS_VOYAGE";
     protected override string DeleteProcedure => "PSD_VOYAGE";
@@ -25,7 +26,7 @@ public class VoyageService : BaseCrudService<Voyage>
         };
     }
 
-    private async Task<int> AddVoyageAsync(string libelle, int utilisateurId)
+    public async Task<int> AddVoyageAsync(string libelle, int utilisateurId)
     {
         var parameters = new[]
         {
@@ -36,8 +37,8 @@ public class VoyageService : BaseCrudService<Voyage>
 
         return await Db.ExecuteNonQueryAsync("PSI_VOYAGE", parameters, "@NEW_ID");
     }
-    
-    private async Task AddVoyageEtapeAsync(int voyageId, int trajetId, int ordre)
+
+    public async Task AddVoyageEtapeAsync(int voyageId, int trajetId, int ordre)
     {
         var parameters = new[]
         {
@@ -48,7 +49,7 @@ public class VoyageService : BaseCrudService<Voyage>
 
         await Db.ExecuteNonQueryAsync("PSI_VOYAGE_ETAPE", parameters);
     }
-    
+
     public async Task SaveItineraireCalculeAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
     {
         var newVoyageId = await AddVoyageAsync(libelle, utilisateurId);
@@ -60,11 +61,11 @@ public class VoyageService : BaseCrudService<Voyage>
             actualOrder++;
         }
     }
-    
+
     public async Task<List<VoyageEtapeDetail>> GetItineraireVoyageAsync(int voyageId)
     {
         var parameters = new[] { new SqlParameter("@VOY_ID", voyageId) };
-        
+
         return await Db.ExecuteQueryAsync("PSS_VOYAGE_ITINERARY", reader => new VoyageEtapeDetail
         {
             Ordre = (int)reader["VET_ORDRE"],

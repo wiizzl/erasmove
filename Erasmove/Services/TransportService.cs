@@ -1,10 +1,11 @@
 using System.Data;
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
 
-public class TransportService : BaseCrudService<Transport>
+public class TransportService : BaseCrudService<Transport>, ITransportService
 {
     protected override string GetListProcedure => "PSS_TRANSPORT";
     protected override string DeleteProcedure => "PSD_TRANSPORT";
@@ -22,7 +23,7 @@ public class TransportService : BaseCrudService<Transport>
             TypeLibelle = (string)reader["TYP_LIBELLE"]
         };
     }
-    
+
     public async Task<List<TypeTransport>> GetTypeTransportsAsync()
     {
         return await Db.ExecuteQueryAsync("PSS_TYPE_TRANSPORT", reader => new TypeTransport

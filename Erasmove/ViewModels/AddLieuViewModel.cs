@@ -1,12 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Erasmove.Models;
 using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
 public partial class AddLieuViewModel : BaseAddViewModel
 {
-    private readonly LieuService _lieuService;
+    private readonly ILieuService _lieuService;
 
     [ObservableProperty] public partial string Nom { get; set; } = string.Empty;
     [ObservableProperty] public partial string Ville { get; set; } = string.Empty;
@@ -14,15 +16,15 @@ public partial class AddLieuViewModel : BaseAddViewModel
     [ObservableProperty] public partial double Latitude { get; set; }
     [ObservableProperty] public partial double Longitude { get; set; }
 
-    public AddLieuViewModel(LieuService lieuService)
+    public AddLieuViewModel(ILieuService lieuService, INavigationService navigationService) : base(navigationService)
     {
         _lieuService = lieuService;
     }
 
     protected override bool ValidateForm()
     {
-        return !string.IsNullOrWhiteSpace(Nom) && 
-               !string.IsNullOrWhiteSpace(Ville) && 
+        return !string.IsNullOrWhiteSpace(Nom) &&
+               !string.IsNullOrWhiteSpace(Ville) &&
                !string.IsNullOrWhiteSpace(Pays);
     }
 

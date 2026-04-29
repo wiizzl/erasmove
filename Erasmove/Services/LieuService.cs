@@ -1,9 +1,10 @@
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
 
-public class LieuService : BaseCrudService<Lieu>
+public class LieuService : BaseCrudService<Lieu>, ILieuService
 {
     protected override string GetListProcedure => "PSS_LIEU";
     protected override string DeleteProcedure => "PSD_LIEU";
@@ -23,7 +24,7 @@ public class LieuService : BaseCrudService<Lieu>
             Longitude = (double)reader["LIE_LONGITUDE"]
         };
     }
-    
+
     public async Task<int> AddLieuAsync(Lieu lieu)
     {
         var parameters = new[]

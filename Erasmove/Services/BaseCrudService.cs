@@ -1,13 +1,8 @@
 using Erasmove.Models;
+using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace Erasmove.Services;
-
-public interface ICrudService<T> where T : IEntity
-{
-    Task<List<T>> GetAllAsync();
-    Task DeleteAsync(int id);
-}
 
 public abstract class BaseCrudService<T> : ICrudService<T> where T : class, IEntity
 {

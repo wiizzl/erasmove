@@ -5,7 +5,7 @@ using Erasmove.Models;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
 
-namespace Erasmove.ViewModels;
+namespace Erasmove.ViewModels.Base;
 
 public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T : class, IEntity
 {
