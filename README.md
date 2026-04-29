@@ -15,3 +15,12 @@ docker compose up -d
 ```
 
 2. Suite à venir...
+
+### Se connecter
+
+Après avoir exécuté les [scripts SQL](./sql/), vous pourrez utiliser ces deux comptes à destination du product owner :
+
+| Identifiant  | Mot de passe | Rôle           |
+| ------------ | ------------ | -------------- |
+| bocba@cba.fr | mdp          | `Gestionnaire` |
+| focba@cba.fr | mdp          | `Voyageur`     |
