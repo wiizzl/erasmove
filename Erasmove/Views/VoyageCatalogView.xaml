@@ -1,21 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
              xmlns:models="clr-namespace:Erasmove.Models"
              x:Class="Erasmove.Views.VoyageCatalogView"
              x:DataType="vm:VoyageCatalogViewModel">
-    
+
     <Grid RowDefinitions="*, Auto" Padding="10">
         <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Items}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Voyage">
-                        <HorizontalStackLayout Spacing="10" Padding="5">
-                            <Label Text="{Binding Libelle}" FontAttributes="Bold" />
-                            <Label Text="{Binding UtilisateurNom}" />
-                            <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
+                        <Grid ColumnDefinitions="*, Auto" Padding="5,6">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding Libelle}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding UtilisateurNom}" TextColor="Gray" FontSize="12" LineBreakMode="TailTruncation" />
+                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Etapes}" Spacing="1">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:VoyageEtapeDetail">
+                                            <Label FontSize="11" LineBreakMode="TailTruncation">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding Ordre}" />
+                                                        <Span Text=". " />
+                                                        <Span Text="{Binding VilleDepart}" />
+                                                        <Span Text=" ➔ " />
+                                                        <Span Text="{Binding VilleArrivee}" />
+                                                        <Span Text=" · " />
+                                                        <Span Text="{Binding CompagnieTransport}" FontAttributes="Italic" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1" Text="X" VerticalOptions="Start"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=DeleteItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

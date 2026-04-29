@@ -8,4 +8,5 @@ public class Voyage : IEntity
     public DateTime DateCreation { get; set; }
     public string UtilisateurNom { get; set; } = string.Empty;
     public string UtilisateurPrenom { get; set; } = string.Empty;
+    public List<VoyageEtapeDetail> Etapes { get; set; } = [];
 }
