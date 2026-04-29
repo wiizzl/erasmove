@@ -4,7 +4,7 @@ Erasmove est une application multiplateforme (.NET MAUI) de gestion des mobilit�
 
 ## Environnement d'exécution
 
-Le projet utilise une architecture hybride : l'application s'exécute nativement (Windows/macOS), tandis que la persistance des données est conteneurisée.
+Le projet utilise une architecture hybride : l'application s'exécute nativement (Windows/macOS), tandis que les données sont conteneurisées via Docker.
 
 ## Installation
 
@@ -16,7 +16,7 @@ docker compose up -d
 
 2. Suite à venir...
 
-### Se connecter
+## Se connecter
 
 Après avoir exécuté les [scripts SQL](./sql/), vous pourrez utiliser ces deux comptes à destination du product owner :
 
