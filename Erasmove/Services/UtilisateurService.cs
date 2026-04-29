@@ -36,6 +36,7 @@ public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurServ
         };
 
         var users = await Db.ExecuteQueryAsync("PSS_UTILISATEUR_LOGIN", MapEntity, parameters);
+        
         return users.FirstOrDefault();
     }
 

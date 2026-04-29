@@ -6,7 +6,7 @@ namespace Erasmove.ViewModels.Base;
 
 public abstract partial class BaseAddViewModel : ObservableObject
 {
-    protected readonly INavigationService NavigationService;
+    private readonly INavigationService NavigationService;
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }

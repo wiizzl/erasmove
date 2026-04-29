@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
-using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 

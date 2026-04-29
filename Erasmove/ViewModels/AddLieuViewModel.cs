@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Erasmove.Models;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
-using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 

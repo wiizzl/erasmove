@@ -9,8 +9,8 @@ namespace Erasmove.ViewModels.Base;
 
 public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T : class, IEntity
 {
-    protected readonly ICrudService<T> Service;
-    protected readonly INavigationService NavigationService;
+    private readonly ICrudService<T> _service;
+    private readonly INavigationService _navigationService;
     private readonly string _routeAjout;
 
     public ObservableCollection<T> Items { get; } = [];
@@ -20,8 +20,8 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
 
     protected BaseCatalogViewModel(ICrudService<T> service, INavigationService navigationService, string routeAjout)
     {
-        Service = service;
-        NavigationService = navigationService;
+        _service = service;
+        _navigationService = navigationService;
         _routeAjout = routeAjout;
     }
 
@@ -31,7 +31,7 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
         try
         {
             IsRefreshing = true;
-            var result = await Service.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             Items.Clear();
             foreach (var item in result)
@@ -41,7 +41,7 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
         }
         catch
         {
-            await NavigationService.DisplayAlertAsync("Erreur", "Impossible de charger les données.", "OK");
+            await _navigationService.DisplayAlertAsync("Erreur", "Impossible de charger les données.", "OK");
         }
         finally
         {
@@ -52,7 +52,7 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
     [RelayCommand]
     protected virtual async Task DeleteItemAsync(T item)
     {
-        var confirm = await NavigationService.DisplayAlertAsync("Confirmation", "Supprimer cet élément ?", "Oui", "Non");
+        var confirm = await _navigationService.DisplayAlertAsync("Confirmation", "Supprimer cet élément ?", "Oui", "Non");
         if (!confirm)
         {
             return;
@@ -60,18 +60,18 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
 
         try
         {
-            await Service.DeleteAsync(item.Id);
+            await _service.DeleteAsync(item.Id);
             Items.Remove(item);
         }
         catch (Exception)
         {
-            await NavigationService.DisplayAlertAsync("Erreur", "Suppression impossible de cet élément.", "OK");
+            await _navigationService.DisplayAlertAsync("Erreur", "Suppression impossible de cet élément.", "OK");
         }
     }
 
     [RelayCommand]
     protected virtual async Task GoToAddPageAsync()
     {
-        await NavigationService.GoToAsync(_routeAjout);
+        await _navigationService.GoToAsync(_routeAjout);
     }
 }

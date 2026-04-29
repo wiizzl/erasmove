@@ -6,6 +6,6 @@
              x:Class="Erasmove.Views.HomeView"
              x:DataType="vm:HomeViewModel">
 
-    <mapsui:MapControl x:Name="UserMap" />
+    <mapsui:MapControl x:Name="HomeMap" />
 
 </ContentPage>
