@@ -10,21 +10,11 @@
         <Picker Title="Étudiant" ItemsSource="{Binding Utilisateurs}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedUtilisateur}" />
         <Picker Title="Ville Départ" ItemsSource="{Binding Villes}" ItemDisplayBinding="{Binding Ville}" SelectedItem="{Binding SelectedDepart}" />
         <Picker Title="Ville Arrivée" ItemsSource="{Binding Villes}" ItemDisplayBinding="{Binding Ville}" SelectedItem="{Binding SelectedArrivee}" />
-        
-        <Button Text="Calculer Itinéraire" Command="{Binding CalculerItineraireCommand}" BackgroundColor="Orange" />
-
-        <CollectionView ItemsSource="{Binding ItineraireCalcule}" HeightRequest="200">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Trajet">
-                    <Label Text="{Binding VilleDepart, StringFormat='{0} ➔ '}"/>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 
         <Button Text="Enregistrer Voyage" Command="{Binding SaveCommand}" IsEnabled="{Binding HasResult}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
-    
+
 </ContentPage>

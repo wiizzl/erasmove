@@ -6,19 +6,19 @@
              x:DataType="vm:AddTrajetViewModel">
 
     <VerticalStackLayout Padding="10" Spacing="10">
-        <Picker Title="Lieu Départ" 
-                ItemsSource="{Binding Lieux}" 
-                ItemDisplayBinding="{Binding Ville}" 
+        <Picker Title="Lieu Départ"
+                ItemsSource="{Binding Lieux}"
+                ItemDisplayBinding="{Binding Nom}"
                 SelectedItem="{Binding SelectedDepart}" />
 
-        <Picker Title="Lieu Arrivée" 
-                ItemsSource="{Binding Lieux}" 
-                ItemDisplayBinding="{Binding Ville}" 
+        <Picker Title="Lieu Arrivée"
+                ItemsSource="{Binding Lieux}"
+                ItemDisplayBinding="{Binding Nom}"
                 SelectedItem="{Binding SelectedArrivee}" />
 
-        <Picker Title="Transport" 
-                ItemsSource="{Binding Transports}" 
-                ItemDisplayBinding="{Binding Compagnie}" 
+        <Picker Title="Transport"
+                ItemsSource="{Binding Transports}"
+                ItemDisplayBinding="{Binding Compagnie}"
                 SelectedItem="{Binding SelectedTransport}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
@@ -26,5 +26,5 @@
         <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
-    
+
 </ContentPage>

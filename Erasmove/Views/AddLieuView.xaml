@@ -17,5 +17,5 @@
         <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
-    
+
 </ContentPage>

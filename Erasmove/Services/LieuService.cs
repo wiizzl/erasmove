@@ -39,4 +39,19 @@ public class LieuService : BaseCrudService<Lieu>, ILieuService
 
         return await Db.ExecuteNonQueryAsync("PSI_LIEU", parameters, "@NEW_ID");
     }
+
+    public async Task UpdateLieuAsync(Lieu lieu)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@LIE_ID", lieu.Id),
+            new SqlParameter("@LIE_NOM", lieu.Nom),
+            new SqlParameter("@LIE_VILLE", lieu.Ville),
+            new SqlParameter("@LIE_PAYS", lieu.Pays),
+            new SqlParameter("@LIE_LATITUDE", lieu.Latitude),
+            new SqlParameter("@LIE_LONGITUDE", lieu.Longitude)
+        };
+
+        await Db.ExecuteNonQueryAsync("PSU_LIEU", parameters);
+    }
 }

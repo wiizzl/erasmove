@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
@@ -39,5 +41,29 @@ public partial class AddLieuViewModel : BaseAddViewModel
         };
 
         await _lieuService.AddLieuAsync(lieu);
+    }
+
+    protected override async Task ExecuteUpdateAsync()
+    {
+        if (EditingItem is not Lieu lieu) return;
+
+        lieu.Nom = Nom;
+        lieu.Ville = Ville;
+        lieu.Pays = Pays;
+        lieu.Latitude = Latitude;
+        lieu.Longitude = Longitude;
+
+        await _lieuService.UpdateLieuAsync(lieu);
+    }
+
+    protected override void LoadItemData(IEntity item)
+    {
+        if (item is not Lieu lieu) return;
+
+        Nom = lieu.Nom;
+        Ville = lieu.Ville;
+        Pays = lieu.Pays;
+        Latitude = lieu.Latitude;
+        Longitude = lieu.Longitude;
     }
 }

@@ -50,6 +50,17 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         await Db.ExecuteNonQueryAsync("PSI_VOYAGE_ETAPE", parameters);
     }
 
+    public async Task UpdateVoyageAsync(Voyage voyage)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@VOY_ID", voyage.Id),
+            new SqlParameter("@VOY_LIBELLE", voyage.Libelle)
+        };
+
+        await Db.ExecuteNonQueryAsync("PSU_VOYAGE", parameters);
+    }
+
     public async Task SaveItineraireCalculeAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
     {
         var newVoyageId = await AddVoyageAsync(libelle, utilisateurId);
@@ -69,8 +80,8 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         return await Db.ExecuteQueryAsync("PSS_VOYAGE_ITINERARY", reader => new VoyageEtapeDetail
         {
             Ordre = (int)reader["VET_ORDRE"],
-            VilleDepart = (string)reader["VILLE_DEPART"],
-            VilleArrivee = (string)reader["VILLE_ARRIVEE"],
+            NomDepart = (string)reader["NOM_DEPART"],
+            NomArrivee = (string)reader["NOM_ARRIVEE"],
             CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
             TypeTransportLibelle = (string)reader["TYP_LIBELLE"]
         }, parameters);

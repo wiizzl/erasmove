@@ -25,6 +25,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
+        builder.Services.AddSingleton<IStateService, StateService>();
 
         builder.Services.AddSingleton<ILieuService, LieuService>();
         builder.Services.AddSingleton<ITransportService, TransportService>();
@@ -34,7 +35,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<LoginView>();
         builder.Services.AddTransient<LoginViewModel>();
-        
+
         builder.Services.AddTransient<HomeView>();
         builder.Services.AddTransient<HomeViewModel>();
 

@@ -10,10 +10,10 @@
         <Entry Placeholder="Prénom" Text="{Binding Prenom}" />
         <Entry Placeholder="Login" Text="{Binding Login}" />
         <Entry Placeholder="Mot de passe" Text="{Binding MotDePasse}" IsPassword="True" />
-        
-        <Picker Title="Rôle" 
-                ItemsSource="{Binding Roles}" 
-                ItemDisplayBinding="{Binding Libelle}" 
+
+        <Picker Title="Rôle"
+                ItemsSource="{Binding Roles}"
+                ItemDisplayBinding="{Binding Libelle}"
                 SelectedItem="{Binding SelectedRole}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
@@ -21,5 +21,5 @@
         <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
-    
+
 </ContentPage>

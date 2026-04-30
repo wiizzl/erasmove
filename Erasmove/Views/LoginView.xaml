@@ -12,7 +12,7 @@
             SemanticProperties.HeadingLevel="Level1" />
         
         <Entry Placeholder="Identifiant" Text="{Binding Login}" />
-        <Entry Placeholder="Mot de passe" Text="{Binding Password}" />
+        <Entry Placeholder="Mot de passe" Text="{Binding Password}" IsPassword="True" />
         
         <Button Text="Se connecter" Command="{Binding LoginCommand}" />
         

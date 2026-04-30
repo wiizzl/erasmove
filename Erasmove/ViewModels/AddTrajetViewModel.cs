@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
@@ -20,7 +22,8 @@ public partial class AddTrajetViewModel : BaseAddViewModel
     public ObservableCollection<Lieu> Lieux { get; } = [];
     public ObservableCollection<Transport> Transports { get; } = [];
 
-    public AddTrajetViewModel(ITrajetService trajetService, ILieuService lieuService, ITransportService transportService, INavigationService navigationService) : base(navigationService)
+    public AddTrajetViewModel(ITrajetService trajetService, ILieuService lieuService,
+        ITransportService transportService, INavigationService navigationService) : base(navigationService)
     {
         _trajetService = trajetService;
         _lieuService = lieuService;
@@ -64,5 +67,25 @@ public partial class AddTrajetViewModel : BaseAddViewModel
         };
 
         await _trajetService.AddTrajetAsync(trajet);
+    }
+
+    protected override async Task ExecuteUpdateAsync()
+    {
+        if (EditingItem is not Trajet trajet) return;
+
+        trajet.LieuDepartId = SelectedDepart!.Id;
+        trajet.LieuArriveeId = SelectedArrivee!.Id;
+        trajet.TransportId = SelectedTransport!.Id;
+
+        await _trajetService.UpdateTrajetAsync(trajet);
+    }
+
+    protected override void LoadItemData(IEntity item)
+    {
+        if (item is not Trajet trajet) return;
+
+        SelectedDepart = Lieux.FirstOrDefault(l => l.Id == trajet.LieuDepartId);
+        SelectedArrivee = Lieux.FirstOrDefault(l => l.Id == trajet.LieuArriveeId);
+        SelectedTransport = Transports.FirstOrDefault(t => t.Id == trajet.TransportId);
     }
 }

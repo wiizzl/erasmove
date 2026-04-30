@@ -1,4 +1,4 @@
-using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 
 namespace Erasmove.Services.Interfaces;
 

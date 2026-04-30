@@ -1,3 +1,5 @@
+using Erasmove.Models.Interfaces;
+
 namespace Erasmove.Models;
 
 public class Voyage : IEntity

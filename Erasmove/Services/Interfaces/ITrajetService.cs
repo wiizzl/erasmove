@@ -5,5 +5,6 @@ namespace Erasmove.Services.Interfaces;
 public interface ITrajetService : ICrudService<Trajet>
 {
     Task<int> AddTrajetAsync(Trajet trajet);
+    Task UpdateTrajetAsync(Trajet trajet);
     Task<List<Trajet>?> FindBestPathAsync(int startLocationId, int endLocationId);
 }

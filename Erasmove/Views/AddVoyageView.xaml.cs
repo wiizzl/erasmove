@@ -1,12 +1,18 @@
-﻿using Erasmove.ViewModels;
+﻿using Erasmove.Models;
+using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels;
 
 namespace Erasmove.Views;
 
 public partial class AddVoyageView : ContentPage
 {
-    public AddVoyageView(AddVoyageViewModel viewModel)
+    private readonly IStateService _stateService;
+
+    public AddVoyageView(AddVoyageViewModel viewModel, IStateService stateService)
     {
         InitializeComponent();
+        _stateService = stateService;
         BindingContext = viewModel;
     }
 
@@ -17,5 +23,19 @@ public partial class AddVoyageView : ContentPage
         {
             vm.LoadDataCommand.Execute(null);
         }
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is not AddVoyageViewModel viewModel)
+        {
+            return;
+        }
+        
+        var item = _stateService.GetEditingItem() as Voyage;
+        viewModel.SetEditingItem(item);
+        _stateService.ClearEditingItem();
     }
 }

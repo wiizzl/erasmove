@@ -1,12 +1,18 @@
-﻿using Erasmove.ViewModels;
+﻿using Erasmove.Models;
+using Erasmove.Services;
+using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels;
 
 namespace Erasmove.Views;
 
 public partial class AddTrajetView : ContentPage
 {
-    public AddTrajetView(AddTrajetViewModel viewModel)
+    private readonly IStateService _stateService;
+
+    public AddTrajetView(AddTrajetViewModel viewModel, IStateService stateService)
     {
         InitializeComponent();
+        _stateService = stateService;
         BindingContext = viewModel;
     }
 
@@ -17,5 +23,19 @@ public partial class AddTrajetView : ContentPage
         {
             vm.LoadDataCommand.Execute(null);
         }
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is not AddTrajetViewModel viewModel)
+        {
+            return;
+        }
+        
+        var item = _stateService.GetEditingItem() as Trajet;
+        viewModel.SetEditingItem(item);
+        _stateService.ClearEditingItem();
     }
 }

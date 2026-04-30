@@ -6,4 +6,5 @@ public interface ITransportService : ICrudService<Transport>
 {
     Task<List<TypeTransport>> GetTypeTransportsAsync();
     Task<int> AddTransportAsync(Transport transport);
+    Task UpdateTransportAsync(Transport transport);
 }

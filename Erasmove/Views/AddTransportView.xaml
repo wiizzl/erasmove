@@ -4,13 +4,13 @@
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
              x:Class="Erasmove.Views.AddTransportView"
              x:DataType="vm:AddTransportViewModel">
-    
+
     <VerticalStackLayout Padding="10" Spacing="10">
         <Entry Placeholder="Compagnie" Text="{Binding Compagnie}" />
-        
-        <Picker Title="Type de transport" 
-                ItemsSource="{Binding Types}" 
-                ItemDisplayBinding="{Binding Libelle}" 
+
+        <Picker Title="Type de transport"
+                ItemsSource="{Binding Types}"
+                ItemDisplayBinding="{Binding Libelle}"
                 SelectedItem="{Binding SelectedType}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
@@ -18,5 +18,5 @@
         <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
-    
+
 </ContentPage>

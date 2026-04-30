@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
@@ -16,7 +18,8 @@ public partial class AddTransportViewModel : BaseAddViewModel
 
     public ObservableCollection<TypeTransport> Types { get; } = [];
 
-    public AddTransportViewModel(ITransportService transportService, INavigationService navigationService) : base(navigationService)
+    public AddTransportViewModel(ITransportService transportService, INavigationService navigationService) : base(
+        navigationService)
     {
         _transportService = transportService;
     }
@@ -46,5 +49,23 @@ public partial class AddTransportViewModel : BaseAddViewModel
         };
 
         await _transportService.AddTransportAsync(transport);
+    }
+
+    protected override async Task ExecuteUpdateAsync()
+    {
+        if (EditingItem is not Transport transport) return;
+
+        transport.Compagnie = Compagnie;
+        transport.TypeId = SelectedType!.Id;
+
+        await _transportService.UpdateTransportAsync(transport);
+    }
+
+    protected override void LoadItemData(IEntity item)
+    {
+        if (item is not Transport transport) return;
+
+        Compagnie = transport.Compagnie;
+        SelectedType = Types.FirstOrDefault(t => t.Id == transport.TypeId);
     }
 }

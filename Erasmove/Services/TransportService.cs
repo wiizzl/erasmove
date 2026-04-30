@@ -44,4 +44,16 @@ public class TransportService : BaseCrudService<Transport>, ITransportService
 
         return await Db.ExecuteNonQueryAsync("PSI_TRANSPORT", parameters, "@NEW_ID");
     }
+
+    public async Task UpdateTransportAsync(Transport transport)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@TRA_ID", transport.Id),
+            new SqlParameter("@TRA_COMPAGNIE", transport.Compagnie),
+            new SqlParameter("@TYP_ID", transport.TypeId)
+        };
+
+        await Db.ExecuteNonQueryAsync("PSU_TRANSPORT", parameters);
+    }
 }

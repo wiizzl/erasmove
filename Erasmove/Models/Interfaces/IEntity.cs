@@ -1,4 +1,4 @@
-namespace Erasmove.Models;
+namespace Erasmove.Models.Interfaces;
 
 public interface IEntity
 {

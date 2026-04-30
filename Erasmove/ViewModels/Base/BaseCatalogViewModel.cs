@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
 
@@ -11,6 +11,7 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
 {
     private readonly ICrudService<T> _service;
     private readonly INavigationService _navigationService;
+    private readonly IStateService _stateService;
     private readonly string _routeAjout;
 
     public ObservableCollection<T> Items { get; } = [];
@@ -18,10 +19,11 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
     [ObservableProperty]
     public partial bool IsRefreshing { get; set; }
 
-    protected BaseCatalogViewModel(ICrudService<T> service, INavigationService navigationService, string routeAjout)
+    protected BaseCatalogViewModel(ICrudService<T> service, INavigationService navigationService, IStateService stateService, string routeAjout)
     {
         _service = service;
         _navigationService = navigationService;
+        _stateService = stateService;
         _routeAjout = routeAjout;
     }
 
@@ -67,6 +69,13 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
         {
             await _navigationService.DisplayAlertAsync("Erreur", "Suppression impossible de cet élément.", "OK");
         }
+    }
+
+    [RelayCommand]
+    protected virtual async Task EditItemAsync(T item)
+    {
+        _stateService.SetEditingItem(item);
+        await _navigationService.GoToAsync(_routeAjout);
     }
 
     [RelayCommand]

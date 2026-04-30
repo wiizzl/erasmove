@@ -15,6 +15,7 @@
                             <Label Text="{Binding Nom}" FontAttributes="Bold" />
                             <Label Text="{Binding Prenom}" />
                             <Label Text="{Binding RoleLibelle}" TextColor="Gray" />
+                            <Button Text="Modifier" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=EditItemCommand}" CommandParameter="{Binding .}" />
                             <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
                         </HorizontalStackLayout>
                     </DataTemplate>

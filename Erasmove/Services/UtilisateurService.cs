@@ -36,7 +36,7 @@ public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurServ
         };
 
         var users = await Db.ExecuteQueryAsync("PSS_UTILISATEUR_LOGIN", MapEntity, parameters);
-        
+
         return users.FirstOrDefault();
     }
 
@@ -62,5 +62,24 @@ public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurServ
         };
 
         return await Db.ExecuteNonQueryAsync("PSI_UTILISATEUR", parameters, "@NEW_ID");
+    }
+
+    public async Task UpdateUtilisateurAsync(Utilisateur utilisateur, string? clearPassword = null)
+    {
+        var password = string.IsNullOrEmpty(clearPassword)
+            ? utilisateur.MotDePasse  // Keep existing password
+            : SecurityHelper.HashPassword(clearPassword);
+
+        var parameters = new[]
+        {
+            new SqlParameter("@UTI_ID", utilisateur.Id),
+            new SqlParameter("@UTI_NOM", utilisateur.Nom),
+            new SqlParameter("@UTI_PRENOM", utilisateur.Prenom),
+            new SqlParameter("@UTI_LOGIN", utilisateur.Login),
+            new SqlParameter("@UTI_MOTDEPASSE", password),
+            new SqlParameter("@ROL_ID", utilisateur.RoleId)
+        };
+
+        await Db.ExecuteNonQueryAsync("PSU_UTILISATEUR", parameters);
     }
 }

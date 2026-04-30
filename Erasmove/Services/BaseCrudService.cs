@@ -1,4 +1,4 @@
-using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 

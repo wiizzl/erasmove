@@ -21,9 +21,10 @@ public class TrajetService : BaseCrudService<Trajet>, ITrajetService
             LieuDepartId = (int)reader["LIE_ID_DEPART"],
             LieuArriveeId = (int)reader["LIE_ID_ARRIVEE"],
             TransportId = (int)reader["TRA_ID"],
-
+            NomDepart = (string)reader["NOM_DEPART"],
             VilleDepart = (string)reader["VILLE_DEPART"],
             PaysDepart = (string)reader["PAYS_DEPART"],
+            NomArrivee = (string)reader["NOM_ARRIVEE"],
             VilleArrivee = (string)reader["VILLE_ARRIVEE"],
             PaysArrivee = (string)reader["PAYS_ARRIVEE"],
             CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
@@ -42,6 +43,19 @@ public class TrajetService : BaseCrudService<Trajet>, ITrajetService
         };
 
         return await Db.ExecuteNonQueryAsync("PSI_TRAJET", parameters, "@NEW_ID");
+    }
+
+    public async Task UpdateTrajetAsync(Trajet trajet)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@TRJ_ID", trajet.Id),
+            new SqlParameter("@LIE_ID_DEPART", trajet.LieuDepartId),
+            new SqlParameter("@LIE_ID_ARRIVEE", trajet.LieuArriveeId),
+            new SqlParameter("@TRA_ID", trajet.TransportId)
+        };
+
+        await Db.ExecuteNonQueryAsync("PSU_TRAJET", parameters);
     }
 
     public async Task<List<Trajet>?> FindBestPathAsync(int startLocationId, int endLocationId)

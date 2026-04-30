@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Erasmove.Models;
+using Erasmove.Models.Interfaces;
 using Erasmove.Services;
 using Erasmove.Services.Interfaces;
+using Erasmove.ViewModels.Base;
 
 namespace Erasmove.ViewModels;
 
@@ -23,7 +25,8 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     public ObservableCollection<Utilisateur> Utilisateurs { get; } = [];
     public ObservableCollection<Trajet> ItineraireCalcule { get; } = [];
 
-    public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService, IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
+    public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService,
+        IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
     {
         _voyageService = voyageService;
         _trajetService = trajetService;
@@ -57,6 +60,18 @@ public partial class AddVoyageViewModel : BaseAddViewModel
 
     protected override async Task ExecuteSaveAsync()
     {
+        // Implémentation du voyage
+    }
 
+    protected override async Task ExecuteUpdateAsync()
+    {
+        if (EditingItem is not Voyage voyage) return;
+        await _voyageService.UpdateVoyageAsync(voyage);
+    }
+
+    protected override void LoadItemData(IEntity item)
+    {
+        if (item is not Voyage voyage) return;
+        SelectedUtilisateur = Utilisateurs.FirstOrDefault(u => u.Id == voyage.UtilisateurId);
     }
 }
