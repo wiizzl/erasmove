@@ -13,6 +13,7 @@ public partial class AddLieuViewModel : BaseAddViewModel
     [ObservableProperty] public partial string Pays { get; set; } = string.Empty;
     [ObservableProperty] public partial double Latitude { get; set; }
     [ObservableProperty] public partial double Longitude { get; set; }
+    
 
     public AddLieuViewModel(LieuService lieuService)
     {

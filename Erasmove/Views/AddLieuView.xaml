@@ -11,6 +11,7 @@
         <Entry Placeholder="Pays" Text="{Binding Pays}" />
         <Entry Placeholder="Latitude" Text="{Binding Latitude}" Keyboard="Numeric" />
         <Entry Placeholder="Longitude" Text="{Binding Longitude}" Keyboard="Numeric" />
+        
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 
