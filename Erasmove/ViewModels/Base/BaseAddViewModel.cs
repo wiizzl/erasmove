@@ -21,11 +21,14 @@ public abstract partial class BaseAddViewModel : ObservableObject
         _navigationService = navigationService;
     }
 
+    protected virtual bool LoadItemDataImmediately => true;
+    protected virtual bool HasReferenceDataLoaded => true;
+
     public virtual void SetEditingItem(IEntity? item)
     {
         EditingItem = item;
         PageTitle = item != null ? "Modifier" : "Ajouter";
-        if (item != null)
+        if (item != null && (LoadItemDataImmediately || HasReferenceDataLoaded))
         {
             LoadItemData(item);
         }

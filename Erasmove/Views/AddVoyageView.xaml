@@ -8,8 +8,8 @@
 
     <VerticalStackLayout Padding="10" Spacing="10">
         <Picker Title="Étudiant" ItemsSource="{Binding Utilisateurs}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedUtilisateur}" />
-        <Picker Title="Ville Départ" ItemsSource="{Binding Villes}" ItemDisplayBinding="{Binding Ville}" SelectedItem="{Binding SelectedDepart}" />
-        <Picker Title="Ville Arrivée" ItemsSource="{Binding Villes}" ItemDisplayBinding="{Binding Ville}" SelectedItem="{Binding SelectedArrivee}" />
+        <Picker Title="Lieu de départ" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedDepart}" />
+        <Picker Title="Lieu d'arrivée" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedArrivee}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 

@@ -66,8 +66,8 @@ public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurServ
 
     public async Task UpdateUtilisateurAsync(Utilisateur utilisateur, string? clearPassword = null)
     {
-        var password = string.IsNullOrEmpty(clearPassword)
-            ? utilisateur.MotDePasse  // Keep existing password
+        object passwordParameter = string.IsNullOrWhiteSpace(clearPassword)
+            ? DBNull.Value
             : SecurityHelper.HashPassword(clearPassword);
 
         var parameters = new[]
@@ -76,7 +76,7 @@ public class UtilisateurService : BaseCrudService<Utilisateur>, IUtilisateurServ
             new SqlParameter("@UTI_NOM", utilisateur.Nom),
             new SqlParameter("@UTI_PRENOM", utilisateur.Prenom),
             new SqlParameter("@UTI_LOGIN", utilisateur.Login),
-            new SqlParameter("@UTI_MOTDEPASSE", password),
+            new SqlParameter("@UTI_MOTDEPASSE", passwordParameter),
             new SqlParameter("@ROL_ID", utilisateur.RoleId)
         };
 

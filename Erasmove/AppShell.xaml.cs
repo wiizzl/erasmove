@@ -11,7 +11,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("AddLieu", typeof(AddLieuView));
         Routing.RegisterRoute("AddTransport", typeof(AddTransportView));
         Routing.RegisterRoute("AddTrajet", typeof(AddTrajetView));
-        Routing.RegisterRoute("AddUtilisateur", typeof(AddUtilisateurView));
         Routing.RegisterRoute("AddVoyage", typeof(AddVoyageView));
+        Routing.RegisterRoute("AddUtilisateur", typeof(AddUtilisateurView));
     }
 }

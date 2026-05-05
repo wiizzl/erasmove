@@ -12,6 +12,7 @@ namespace Erasmove.ViewModels;
 public partial class AddTransportViewModel : BaseAddViewModel
 {
     private readonly ITransportService _transportService;
+    private bool _referenceDataLoaded;
 
     [ObservableProperty] public partial string Compagnie { get; set; } = string.Empty;
     [ObservableProperty] public partial TypeTransport? SelectedType { get; set; }
@@ -24,6 +25,9 @@ public partial class AddTransportViewModel : BaseAddViewModel
         _transportService = transportService;
     }
 
+    protected override bool LoadItemDataImmediately => false;
+    protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
+
     [RelayCommand]
     public async Task LoadDataAsync()
     {
@@ -32,6 +36,13 @@ public partial class AddTransportViewModel : BaseAddViewModel
         foreach (var type in types)
         {
             Types.Add(type);
+        }
+
+        _referenceDataLoaded = true;
+
+        if (EditingItem is not null)
+        {
+            LoadItemData(EditingItem);
         }
     }
 
@@ -63,9 +74,12 @@ public partial class AddTransportViewModel : BaseAddViewModel
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Transport transport) return;
+        if (item is not Transport transport)
+        {
+            return;
+        }
 
         Compagnie = transport.Compagnie;
-        SelectedType = Types.FirstOrDefault(t => t.Id == transport.TypeId);
+        SelectedType = Types.FirstOrDefault(type => type.Id == transport.TypeId);
     }
 }

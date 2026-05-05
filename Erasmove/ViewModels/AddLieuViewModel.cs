@@ -58,7 +58,10 @@ public partial class AddLieuViewModel : BaseAddViewModel
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Lieu lieu) return;
+        if (item is not Lieu lieu)
+        {
+            return;
+        }
 
         Nom = lieu.Nom;
         Ville = lieu.Ville;

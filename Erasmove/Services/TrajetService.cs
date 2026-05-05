@@ -21,12 +21,8 @@ public class TrajetService : BaseCrudService<Trajet>, ITrajetService
             LieuDepartId = (int)reader["LIE_ID_DEPART"],
             LieuArriveeId = (int)reader["LIE_ID_ARRIVEE"],
             TransportId = (int)reader["TRA_ID"],
-            NomDepart = (string)reader["NOM_DEPART"],
-            VilleDepart = (string)reader["VILLE_DEPART"],
-            PaysDepart = (string)reader["PAYS_DEPART"],
-            NomArrivee = (string)reader["NOM_ARRIVEE"],
-            VilleArrivee = (string)reader["VILLE_ARRIVEE"],
-            PaysArrivee = (string)reader["PAYS_ARRIVEE"],
+            LieuDepartNom = (string)reader["LIE_NOM_DEPART"],
+            LieuArriveeNom = (string)reader["LIE_NOM_ARRIVEE"],
             CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
             TypeTransportLibelle = (string)reader["TYP_LIBELLE"]
         };
@@ -56,40 +52,5 @@ public class TrajetService : BaseCrudService<Trajet>, ITrajetService
         };
 
         await Db.ExecuteNonQueryAsync("PSU_TRAJET", parameters);
-    }
-
-    public async Task<List<Trajet>?> FindBestPathAsync(int startLocationId, int endLocationId)
-    {
-        var allSegments = await GetAllAsync();
-        var pathQueue = new Queue<List<Trajet>>();
-
-        var startingPoints = allSegments.Where(t => t.LieuDepartId == startLocationId);
-        foreach (var start in startingPoints)
-        {
-            pathQueue.Enqueue([start]);
-        }
-
-        while (pathQueue.Count > 0)
-        {
-            var currentPath = pathQueue.Dequeue();
-            var lastSegment = currentPath.Last();
-
-            if (lastSegment.LieuArriveeId == endLocationId)
-            {
-                return currentPath;
-            }
-
-            var nextSteps = allSegments.Where(t =>
-                t.LieuDepartId == lastSegment.LieuArriveeId &&
-                currentPath.All(p => p.LieuDepartId != t.LieuArriveeId));
-
-            foreach (var step in nextSteps)
-            {
-                var newPath = new List<Trajet>(currentPath) { step };
-                pathQueue.Enqueue(newPath);
-            }
-        }
-
-        return null;
     }
 }

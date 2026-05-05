@@ -12,6 +12,7 @@ namespace Erasmove.ViewModels;
 public partial class AddUtilisateurViewModel : BaseAddViewModel
 {
     private readonly IUtilisateurService _utilisateurService;
+    private bool _referenceDataLoaded;
 
     [ObservableProperty] public partial string Nom { get; set; } = string.Empty;
     [ObservableProperty] public partial string Prenom { get; set; } = string.Empty;
@@ -27,6 +28,9 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
         _utilisateurService = utilisateurService;
     }
 
+    protected override bool LoadItemDataImmediately => false;
+    protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
+
     [RelayCommand]
     public async Task LoadDataAsync()
     {
@@ -36,6 +40,13 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
         {
             Roles.Add(role);
         }
+
+        _referenceDataLoaded = true;
+
+        if (EditingItem is not null)
+        {
+            LoadItemData(EditingItem);
+        }
     }
 
     protected override bool ValidateForm()
@@ -43,7 +54,7 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
         return !string.IsNullOrWhiteSpace(Nom) &&
                !string.IsNullOrWhiteSpace(Prenom) &&
                !string.IsNullOrWhiteSpace(Login) &&
-               !string.IsNullOrWhiteSpace(MotDePasse) &&
+               (EditingItem != null || !string.IsNullOrWhiteSpace(MotDePasse)) &&
                SelectedRole != null;
     }
 
@@ -75,12 +86,15 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Utilisateur utilisateur) return;
+        if (item is not Utilisateur utilisateur)
+        {
+            return;
+        }
 
         Nom = utilisateur.Nom;
         Prenom = utilisateur.Prenom;
         Login = utilisateur.Login;
-        SelectedRole = Roles.FirstOrDefault(r => r.Id == utilisateur.RoleId);
+        SelectedRole = Roles.FirstOrDefault(role => role.Id == utilisateur.RoleId);
         MotDePasse = string.Empty;
     }
 }

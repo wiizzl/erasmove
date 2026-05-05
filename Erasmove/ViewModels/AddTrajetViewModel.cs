@@ -14,6 +14,7 @@ public partial class AddTrajetViewModel : BaseAddViewModel
     private readonly ITrajetService _trajetService;
     private readonly ILieuService _lieuService;
     private readonly ITransportService _transportService;
+    private bool _referenceDataLoaded;
 
     [ObservableProperty] public partial Lieu? SelectedDepart { get; set; }
     [ObservableProperty] public partial Lieu? SelectedArrivee { get; set; }
@@ -29,6 +30,9 @@ public partial class AddTrajetViewModel : BaseAddViewModel
         _lieuService = lieuService;
         _transportService = transportService;
     }
+
+    protected override bool LoadItemDataImmediately => false;
+    protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
 
     [RelayCommand]
     public async Task LoadDataAsync()
@@ -46,6 +50,13 @@ public partial class AddTrajetViewModel : BaseAddViewModel
         foreach (var transport in transports)
         {
             Transports.Add(transport);
+        }
+
+        _referenceDataLoaded = true;
+
+        if (EditingItem is not null)
+        {
+            LoadItemData(EditingItem);
         }
     }
 
@@ -82,10 +93,13 @@ public partial class AddTrajetViewModel : BaseAddViewModel
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Trajet trajet) return;
+        if (item is not Trajet trajet)
+        {
+            return;
+        }
 
-        SelectedDepart = Lieux.FirstOrDefault(l => l.Id == trajet.LieuDepartId);
-        SelectedArrivee = Lieux.FirstOrDefault(l => l.Id == trajet.LieuArriveeId);
-        SelectedTransport = Transports.FirstOrDefault(t => t.Id == trajet.TransportId);
+        SelectedDepart = Lieux.FirstOrDefault(lieu => lieu.Id == trajet.LieuDepartId);
+        SelectedArrivee = Lieux.FirstOrDefault(lieu => lieu.Id == trajet.LieuArriveeId);
+        SelectedTransport = Transports.FirstOrDefault(transport => transport.Id == trajet.TransportId);
     }
 }

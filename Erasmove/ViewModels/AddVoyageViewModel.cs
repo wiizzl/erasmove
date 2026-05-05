@@ -21,9 +21,8 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     [ObservableProperty] public partial Utilisateur? SelectedUtilisateur { get; set; }
     [ObservableProperty] public partial bool HasResult { get; set; }
 
-    public ObservableCollection<Lieu> Villes { get; } = [];
+    public ObservableCollection<Lieu> Lieux { get; } = [];
     public ObservableCollection<Utilisateur> Utilisateurs { get; } = [];
-    public ObservableCollection<Trajet> ItineraireCalcule { get; } = [];
 
     public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService,
         IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
@@ -40,10 +39,10 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         var lieux = await _lieuService.GetAllAsync();
         var utilisateurs = await _utilisateurService.GetAllAsync();
 
-        Villes.Clear();
-        foreach (var l in lieux)
+        Lieux.Clear();
+        foreach (var lieu in lieux)
         {
-            Villes.Add(l);
+            Lieux.Add(lieu);
         }
 
         Utilisateurs.Clear();
@@ -51,27 +50,38 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         {
             Utilisateurs.Add(u);
         }
+
+        if (EditingItem is not null)
+        {
+            LoadItemData(EditingItem);
+        }
     }
 
     protected override bool ValidateForm()
     {
-        return SelectedUtilisateur != null && HasResult && ItineraireCalcule.Count > 0;
+        return SelectedUtilisateur != null &&
+               SelectedDepart != null &&
+               SelectedArrivee != null &&
+               SelectedDepart.Id != SelectedArrivee.Id;
     }
 
     protected override async Task ExecuteSaveAsync()
     {
-        // Implémentation du voyage
+
     }
 
     protected override async Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Voyage voyage) return;
-        await _voyageService.UpdateVoyageAsync(voyage);
+        
     }
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Voyage voyage) return;
-        SelectedUtilisateur = Utilisateurs.FirstOrDefault(u => u.Id == voyage.UtilisateurId);
+        if (item is not Voyage voyage)
+        {
+            return;
+        }
+        
+        SelectedUtilisateur = Utilisateurs.FirstOrDefault(utilisateur => utilisateur.Id == voyage.UtilisateurId);
     }
 }
