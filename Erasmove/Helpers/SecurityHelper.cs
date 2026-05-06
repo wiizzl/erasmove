@@ -11,7 +11,7 @@ public static class SecurityHelper
         {
             return string.Empty;
         }
-        
+
         var bytes = Encoding.UTF8.GetBytes(password);
         var hash = SHA256.HashData(bytes);
 
