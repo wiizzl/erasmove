@@ -1,25 +1,49 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
              x:Class="Erasmove.Views.AddUtilisateurView"
              x:DataType="vm:AddUtilisateurViewModel">
 
-    <VerticalStackLayout Padding="10" Spacing="10">
-        <Entry Placeholder="Nom" Text="{Binding Nom}" />
-        <Entry Placeholder="Prénom" Text="{Binding Prenom}" />
-        <Entry Placeholder="Login" Text="{Binding Login}" />
-        <Entry Placeholder="Mot de passe" Text="{Binding MotDePasse}" IsPassword="True" />
+    <ScrollView>
+        <VerticalStackLayout Padding="32,24"
+                             Spacing="12"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="560">
 
-        <Picker Title="Rôle"
-                ItemsSource="{Binding Roles}"
-                ItemDisplayBinding="{Binding Libelle}"
-                SelectedItem="{Binding SelectedRole}" />
+                <Label Text="Ajouter un Utilisateur" Style="{StaticResource TablePageTitle}" Margin="0,0,0,8" />
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}" />
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Nom" Text="{Binding Nom}" />
+                </Border>
 
-        <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
-        <Button Text="Annuler" Command="{Binding CancelCommand}" />
-    </VerticalStackLayout>
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Prénom" Text="{Binding Prenom}" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Login" Text="{Binding Login}" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Mot de passe" Text="{Binding MotDePasse}" IsPassword="True" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Picker Title="Rôle"
+                            ItemsSource="{Binding Roles}"
+                            ItemDisplayBinding="{Binding Libelle}"
+                            SelectedItem="{Binding SelectedRole}" />
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Margin="0,4" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
+                    <Button Grid.Column="1" Text="Annuler" Command="{Binding CancelCommand}" />
+                </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

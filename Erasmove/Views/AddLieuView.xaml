@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
@@ -12,17 +12,46 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <VerticalStackLayout Padding="10" Spacing="10">
-        <Entry Placeholder="Nom" Text="{Binding Nom}" />
-        <Entry Placeholder="Ville" Text="{Binding Ville}" />
-        <Entry Placeholder="Pays" Text="{Binding Pays}" />
-        <Entry Placeholder="Latitude" Text="{Binding Latitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}" Keyboard="Numeric" />
-        <Entry Placeholder="Longitude" Text="{Binding Longitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}" Keyboard="Numeric" />
+    <ScrollView>
+        <VerticalStackLayout Padding="32,24"
+                             Spacing="12"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="560">
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}" />
+                <Label Text="Ajouter un Lieu" Style="{StaticResource TablePageTitle}" Margin="0,0,0,8" />
 
-        <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
-        <Button Text="Annuler" Command="{Binding CancelCommand}" />
-    </VerticalStackLayout>
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Nom" Text="{Binding Nom}" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Ville" Text="{Binding Ville}" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Pays" Text="{Binding Pays}" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Latitude"
+                           Text="{Binding Latitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}"
+                           Keyboard="Numeric" />
+                </Border>
+
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Longitude"
+                           Text="{Binding Longitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}"
+                           Keyboard="Numeric" />
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Margin="0,4" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
+                    <Button Grid.Column="1" Text="Annuler" Command="{Binding CancelCommand}" />
+                </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

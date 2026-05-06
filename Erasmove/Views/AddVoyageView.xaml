@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
@@ -6,38 +6,68 @@
              x:Class="Erasmove.Views.AddVoyageView"
              x:DataType="vm:AddVoyageViewModel">
 
-    <VerticalStackLayout Padding="10" Spacing="10">
-        <Entry Placeholder="Intitulé du voyage" Text="{Binding Libelle}" />
+    <ScrollView>
+        <VerticalStackLayout Padding="32,24"
+                             Spacing="12"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="560">
 
-        <Picker Title="Voyageur"
-                ItemsSource="{Binding Utilisateurs}"
-                ItemDisplayBinding="{Binding FullName}"
-                SelectedItem="{Binding SelectedUtilisateur}" />
+                <Label Text="Ajouter un Voyage" Style="{StaticResource TablePageTitle}" Margin="0,0,0,8" />
 
-        <Picker Title="Lieu de départ" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedDepart}" />
-        <Picker Title="Lieu d'arrivée" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedArrivee}" />
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Intitulé du voyage" Text="{Binding Libelle}" />
+                </Border>
 
-        <Button Text="Calculer meilleur itinéraire" Command="{Binding CalculateBestItineraryCommand}" />
+                <Border Style="{StaticResource FormField}">
+                    <Picker Title="Voyageur"
+                            ItemsSource="{Binding Utilisateurs}"
+                            ItemDisplayBinding="{Binding FullName}"
+                            SelectedItem="{Binding SelectedUtilisateur}" />
+                </Border>
 
-        <Label Text="{Binding ItineraireMessage}" LineBreakMode="WordWrap" />
+                <Border Style="{StaticResource FormField}">
+                    <Picker Title="Lieu de départ"
+                            ItemsSource="{Binding Lieux}"
+                            ItemDisplayBinding="{Binding Nom}"
+                            SelectedItem="{Binding SelectedDepart}" />
+                </Border>
 
-        <CollectionView ItemsSource="{Binding ItineraireCalcule}" IsVisible="{Binding HasResult}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Trajet">
-                    <VerticalStackLayout Spacing="2">
-                        <Label Text="{Binding LieuDepartNom}" FontAttributes="Bold" />
-                        <Label Text="{Binding LieuArriveeNom}" />
-                        <Label Text="{Binding TypeTransportLibelle}" />
-                        <Label Text="{Binding CompagnieTransport}" FontSize="12" />
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                <Border Style="{StaticResource FormField}">
+                    <Picker Title="Lieu d'arrivée"
+                            ItemsSource="{Binding Lieux}"
+                            ItemDisplayBinding="{Binding Nom}"
+                            SelectedItem="{Binding SelectedArrivee}" />
+                </Border>
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}" />
+                <Button Text="Calculer meilleur itinéraire" Command="{Binding CalculateBestItineraryCommand}" />
 
-        <Button Text="Enregistrer Voyage" Command="{Binding SaveCommand}" />
-        <Button Text="Annuler" Command="{Binding CancelCommand}" />
-    </VerticalStackLayout>
+                <Label Text="{Binding ItineraireMessage}" LineBreakMode="WordWrap"
+                       TextColor="{StaticResource Gray600}" FontSize="13" />
+
+                <CollectionView ItemsSource="{Binding ItineraireCalcule}" IsVisible="{Binding HasResult}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Trajet">
+                            <Border Stroke="{StaticResource Gray200}" StrokeThickness="1" StrokeShape="RoundRectangle 6"
+                                    Padding="12,8" Margin="0,4">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding LieuDepartNom}" FontAttributes="Bold" />
+                                    <Label Text="{Binding LieuArriveeNom}" />
+                                    <Label Text="{Binding TypeTransportLibelle}" TextColor="{StaticResource Gray500}" FontSize="13" />
+                                    <Label Text="{Binding CompagnieTransport}" TextColor="{StaticResource Gray500}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Margin="0,4" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Enregistrer Voyage" Command="{Binding SaveCommand}" />
+                    <Button Grid.Column="1" Text="Annuler" Command="{Binding CancelCommand}" />
+                </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

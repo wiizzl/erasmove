@@ -1,22 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
              x:Class="Erasmove.Views.AddTransportView"
              x:DataType="vm:AddTransportViewModel">
 
-    <VerticalStackLayout Padding="10" Spacing="10">
-        <Entry Placeholder="Compagnie" Text="{Binding Compagnie}" />
+    <ScrollView>
+        <VerticalStackLayout Padding="32,24"
+                             Spacing="12"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="560">
 
-        <Picker Title="Type de transport"
-                ItemsSource="{Binding Types}"
-                ItemDisplayBinding="{Binding Libelle}"
-                SelectedItem="{Binding SelectedType}" />
+                <Label Text="Ajouter un Transport" Style="{StaticResource TablePageTitle}" Margin="0,0,0,8" />
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}" />
+                <Border Style="{StaticResource FormField}">
+                    <Entry Placeholder="Compagnie" Text="{Binding Compagnie}" />
+                </Border>
 
-        <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
-        <Button Text="Annuler" Command="{Binding CancelCommand}" />
-    </VerticalStackLayout>
+                <Border Style="{StaticResource FormField}">
+                    <Picker Title="Type de transport"
+                            ItemsSource="{Binding Types}"
+                            ItemDisplayBinding="{Binding Libelle}"
+                            SelectedItem="{Binding SelectedType}" />
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Margin="0,4" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
+                    <Button Grid.Column="1" Text="Annuler" Command="{Binding CancelCommand}" />
+                </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

@@ -6,10 +6,8 @@ public class StringToDoubleConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is double d)
-        {
+        if (value is double d && d != 0.0)
             return d.ToString(culture);
-        }
 
         return string.Empty;
     }

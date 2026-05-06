@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
@@ -6,25 +6,59 @@
              x:Class="Erasmove.Views.TrajetCatalogView"
              x:DataType="vm:TrajetCatalogViewModel">
 
-    <Grid RowDefinitions="*, Auto" Padding="10">
-        <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="20,16">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+            <Label Text="Trajets" Style="{StaticResource TablePageTitle}" />
+            <Button Grid.Column="1" Text="+"
+                    Style="{StaticResource AddButton}"
+                    Command="{Binding GoToAddPageCommand}" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="2*,3*,2*,90">
+            <Label Grid.Column="0" Text="Départ"    Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Column="1" Text="Transport" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Column="2" Text="Arrivée"   Style="{StaticResource TableHeaderLabel}" />
+        </Grid>
+
+        <BoxView Grid.Row="2" HeightRequest="1" Margin="0,4,0,0" />
+
+        <RefreshView Grid.Row="3"
+                     Command="{Binding LoadItemsCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Items}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Trajet">
-                        <HorizontalStackLayout Spacing="10" Padding="5">
-                            <Label Text="{Binding LieuDepartNom}" />
-                            <Label Text="➔" />
-                            <Label Text="{Binding LieuArriveeNom}" />
-                            <Label Text="{Binding CompagnieTransport}" FontAttributes="Italic" />
-                            <Button Text="Modifier" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TrajetCatalogViewModel}}, Path=EditItemCommand}" CommandParameter="{Binding .}" />
-                            <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TrajetCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout>
+                            <Grid ColumnDefinitions="2*,3*,2*,90" Padding="0,8">
+                                <Label Grid.Column="0" Text="{Binding LieuDepartNom}"  Style="{StaticResource TableCellLabel}" />
+                                <Label Grid.Column="1" Style="{StaticResource TableCellLabel}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding CompagnieTransport}" />
+                                            <Span Text=" · " />
+                                            <Span Text="{Binding TypeTransportLibelle}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Grid.Column="2" Text="{Binding LieuArriveeNom}" Style="{StaticResource TableCellLabel}" />
+                                <HorizontalStackLayout Grid.Column="3" Spacing="4"
+                                                       VerticalOptions="Center" HorizontalOptions="Center">
+                                    <Button Text="✏" Style="{StaticResource EditButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TrajetCatalogViewModel}}, Path=EditItemCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Text="🗑" Style="{StaticResource DeleteButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TrajetCatalogViewModel}}, Path=DeleteItemCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <BoxView HeightRequest="1" Opacity="0.3" Margin="4,0" />
+                        </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="1" Text="Ajouter Trajet" Command="{Binding GoToAddPageCommand}" />
     </Grid>
 
 </ContentPage>
