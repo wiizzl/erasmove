@@ -11,7 +11,6 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
 {
     private readonly ICrudService<T> _service;
     private readonly INavigationService _navigationService;
-    private readonly IStateService _stateService;
     private readonly string _routeAjout;
 
     public ObservableCollection<T> Items { get; } = [];
@@ -19,17 +18,21 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
     [ObservableProperty]
     public partial bool IsRefreshing { get; set; }
 
-    protected BaseCatalogViewModel(ICrudService<T> service, INavigationService navigationService, IStateService stateService, string routeAjout)
+    protected BaseCatalogViewModel(ICrudService<T> service, INavigationService navigationService, string routeAjout)
     {
         _service = service;
         _navigationService = navigationService;
-        _stateService = stateService;
         _routeAjout = routeAjout;
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public virtual async Task LoadItemsAsync()
     {
+        if (IsRefreshing)
+        {
+            return;
+        }
+
         try
         {
             IsRefreshing = true;
@@ -74,8 +77,12 @@ public abstract partial class BaseCatalogViewModel<T> : ObservableObject where T
     [RelayCommand]
     protected virtual async Task EditItemAsync(T item)
     {
-        _stateService.SetEditingItem(item);
-        await _navigationService.GoToAsync(_routeAjout);
+        var parameters = new Dictionary<string, object>
+        {
+            [BaseAddViewModel.EditingItemParameterName] = item
+        };
+
+        await _navigationService.GoToAsync(_routeAjout, parameters);
     }
 
     [RelayCommand]

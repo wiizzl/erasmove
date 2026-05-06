@@ -5,6 +5,11 @@ namespace Erasmove.Services;
 
 public class DatabaseService
 {
+    private static SqlConnection CreateConnection()
+    {
+        return new SqlConnection(GetConnectionString());
+    }
+
     private static string GetConnectionString()
     {
         var builder = new SqlConnectionStringBuilder
@@ -23,18 +28,18 @@ public class DatabaseService
     {
         var results = new List<T>();
 
-        await using var connection = new SqlConnection(GetConnectionString());
+        await using var connection = CreateConnection();
         await using var command = new SqlCommand(procedureName, connection);
-        
+
         command.CommandType = CommandType.StoredProcedure;
         if (parameters != null)
         {
             command.Parameters.AddRange(parameters);
         }
-        
+
         await connection.OpenAsync();
         await using var reader = await command.ExecuteReaderAsync();
-        
+
         while (await reader.ReadAsync())
         {
             results.Add(mapFunction(reader));
@@ -42,26 +47,57 @@ public class DatabaseService
 
         return results;
     }
-    
+
     public async Task<int> ExecuteNonQueryAsync(string procedureName, SqlParameter[]? parameters = null, string? outputIdParam = null)
     {
-        await using var connection = new SqlConnection(GetConnectionString());
-        await using var command = new SqlCommand(procedureName, connection);
-        
-        command.CommandType = CommandType.StoredProcedure;
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+        return await ExecuteNonQueryAsync(procedureName, connection, null, parameters, outputIdParam);
+    }
+
+    public async Task<int> ExecuteNonQueryAsync(
+        string procedureName,
+        SqlConnection connection,
+        SqlTransaction? transaction,
+        SqlParameter[]? parameters = null,
+        string? outputIdParam = null)
+    {
+        await using var command = new SqlCommand(procedureName, connection, transaction)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
         if (parameters != null)
         {
             command.Parameters.AddRange(parameters);
         }
-        
-        await connection.OpenAsync();
+
         await command.ExecuteNonQueryAsync();
-        
+
         if (!string.IsNullOrEmpty(outputIdParam) && command.Parameters.Contains(outputIdParam))
         {
             return (int)command.Parameters[outputIdParam].Value;
         }
 
         return 0;
+    }
+
+    public async Task<T> ExecuteInTransactionAsync<T>(Func<SqlConnection, SqlTransaction, Task<T>> operation)
+    {
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+
+        await using var transaction = (SqlTransaction)await connection.BeginTransactionAsync();
+        try
+        {
+            var result = await operation(connection, transaction);
+            await transaction.CommitAsync();
+            return result;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

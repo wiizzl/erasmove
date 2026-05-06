@@ -5,8 +5,10 @@ using Erasmove.Services;
 
 namespace Erasmove.ViewModels.Base;
 
-public abstract partial class BaseAddViewModel : ObservableObject
+public abstract partial class BaseAddViewModel : ObservableObject, IQueryAttributable
 {
+    public const string EditingItemParameterName = "editingItem";
+
     private readonly INavigationService _navigationService;
     protected IEntity? EditingItem { get; set; }
 
@@ -32,6 +34,17 @@ public abstract partial class BaseAddViewModel : ObservableObject
         {
             LoadItemData(item);
         }
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue(EditingItemParameterName, out var editingItem) && editingItem is IEntity entity)
+        {
+            SetEditingItem(entity);
+            return;
+        }
+
+        SetEditingItem(null);
     }
 
     [RelayCommand]

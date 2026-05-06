@@ -17,6 +17,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     private readonly ILieuService _lieuService;
     private readonly IUtilisateurService _utilisateurService;
     private bool _referenceDataLoaded;
+    private bool _isLoadingData;
 
     [ObservableProperty] public partial string Libelle { get; set; } = string.Empty;
     [ObservableProperty] public partial Lieu? SelectedDepart { get; set; }
@@ -29,8 +30,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     public ObservableCollection<Utilisateur> Utilisateurs { get; } = [];
     public ObservableCollection<Trajet> ItineraireCalcule { get; } = [];
 
-    public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService,
-        IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
+    public AddVoyageViewModel(IVoyageService voyageService, ITrajetService trajetService, ILieuService lieuService, IUtilisateurService utilisateurService, INavigationService navigationService) : base(navigationService)
     {
         _voyageService = voyageService;
         _trajetService = trajetService;
@@ -41,29 +41,43 @@ public partial class AddVoyageViewModel : BaseAddViewModel
     protected override bool LoadItemDataImmediately => false;
     protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LoadDataAsync()
     {
-        var lieux = await _lieuService.GetAllAsync();
-        var utilisateurs = await _utilisateurService.GetAllAsync();
-
-        Lieux.Clear();
-        foreach (var lieu in lieux)
+        if (_referenceDataLoaded || _isLoadingData)
         {
-            Lieux.Add(lieu);
+            return;
         }
 
-        Utilisateurs.Clear();
-        foreach (var u in utilisateurs.Where(user => user.RoleLibelle.Equals("Voyageur", StringComparison.OrdinalIgnoreCase)))
+        try
         {
-            Utilisateurs.Add(u);
+            _isLoadingData = true;
+
+            var lieux = await _lieuService.GetAllAsync();
+            var utilisateurs = await _utilisateurService.GetAllAsync();
+
+            Lieux.Clear();
+            foreach (var lieu in lieux)
+            {
+                Lieux.Add(lieu);
+            }
+
+            Utilisateurs.Clear();
+            foreach (var u in utilisateurs.Where(user => user.RoleLibelle.Equals("Voyageur", StringComparison.OrdinalIgnoreCase)))
+            {
+                Utilisateurs.Add(u);
+            }
+
+            _referenceDataLoaded = true;
+
+            if (EditingItem is not null)
+            {
+                LoadItemData(EditingItem);
+            }
         }
-
-        _referenceDataLoaded = true;
-
-        if (EditingItem is not null)
+        finally
         {
-            LoadItemData(EditingItem);
+            _isLoadingData = false;
         }
     }
 
@@ -125,12 +139,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
 
     protected override async Task ExecuteSaveAsync()
     {
-        var voyageId = await _voyageService.AddVoyageAsync(Libelle.Trim(), SelectedUtilisateur!.Id);
-
-        for (var i = 0; i < ItineraireCalcule.Count; i++)
-        {
-            await _voyageService.AddVoyageEtapeAsync(voyageId, ItineraireCalcule[i].Id, i + 1);
-        }
+        await _voyageService.CreateVoyageWithEtapesAsync(Libelle, SelectedUtilisateur!.Id, ItineraireCalcule.ToList());
     }
 
     protected override async Task ExecuteUpdateAsync()
@@ -202,12 +211,11 @@ public partial class AddVoyageViewModel : BaseAddViewModel
             foreach (var trajet in outgoing)
             {
                 var nextLieuId = trajet.LieuArriveeId;
-                if (visited.Contains(nextLieuId))
+                if (!visited.Add(nextLieuId))
                 {
                     continue;
                 }
 
-                visited.Add(nextLieuId);
                 predecessors[nextLieuId] = (currentLieuId, trajet);
 
                 if (nextLieuId == arriveeId)
@@ -222,8 +230,7 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         return [];
     }
 
-    private static List<Trajet> RebuildPath(int departId, int arriveeId,
-        Dictionary<int, (int PreviousLieuId, Trajet ViaTrajet)> predecessors)
+    private static List<Trajet> RebuildPath(int departId, int arriveeId, Dictionary<int, (int PreviousLieuId, Trajet ViaTrajet)> predecessors)
     {
         var path = new List<Trajet>();
         var currentLieuId = arriveeId;
@@ -240,12 +247,8 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         }
 
         path.Reverse();
+
         return path;
     }
 
-    public override void SetEditingItem(IEntity? item)
-    {
-        EditingItem = null;
-        PageTitle = "Ajouter";
-    }
 }

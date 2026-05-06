@@ -15,6 +15,7 @@ public partial class AddTrajetViewModel : BaseAddViewModel
     private readonly ILieuService _lieuService;
     private readonly ITransportService _transportService;
     private bool _referenceDataLoaded;
+    private bool _isLoadingData;
 
     [ObservableProperty] public partial Lieu? SelectedDepart { get; set; }
     [ObservableProperty] public partial Lieu? SelectedArrivee { get; set; }
@@ -34,29 +35,43 @@ public partial class AddTrajetViewModel : BaseAddViewModel
     protected override bool LoadItemDataImmediately => false;
     protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LoadDataAsync()
     {
-        var lieux = await _lieuService.GetAllAsync();
-        var transports = await _transportService.GetAllAsync();
-
-        Lieux.Clear();
-        foreach (var lieu in lieux)
+        if (_referenceDataLoaded || _isLoadingData)
         {
-            Lieux.Add(lieu);
+            return;
         }
 
-        Transports.Clear();
-        foreach (var transport in transports)
+        try
         {
-            Transports.Add(transport);
+            _isLoadingData = true;
+
+            var lieux = await _lieuService.GetAllAsync();
+            var transports = await _transportService.GetAllAsync();
+
+            Lieux.Clear();
+            foreach (var lieu in lieux)
+            {
+                Lieux.Add(lieu);
+            }
+
+            Transports.Clear();
+            foreach (var transport in transports)
+            {
+                Transports.Add(transport);
+            }
+
+            _referenceDataLoaded = true;
+
+            if (EditingItem is not null)
+            {
+                LoadItemData(EditingItem);
+            }
         }
-
-        _referenceDataLoaded = true;
-
-        if (EditingItem is not null)
+        finally
         {
-            LoadItemData(EditingItem);
+            _isLoadingData = false;
         }
     }
 

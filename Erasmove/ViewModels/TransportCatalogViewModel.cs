@@ -7,7 +7,7 @@ namespace Erasmove.ViewModels;
 
 public partial class TransportCatalogViewModel : BaseCatalogViewModel<Transport>
 {
-    public TransportCatalogViewModel(ITransportService service, INavigationService navigationService, IStateService stateService) : base(service, navigationService, stateService, "AddTransport")
+    public TransportCatalogViewModel(ITransportService service, INavigationService navigationService) : base(service, navigationService, "AddTransport")
     {
     }
 }

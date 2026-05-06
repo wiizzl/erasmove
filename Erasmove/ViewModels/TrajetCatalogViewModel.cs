@@ -7,7 +7,7 @@ namespace Erasmove.ViewModels;
 
 public partial class TrajetCatalogViewModel : BaseCatalogViewModel<Trajet>
 {
-    public TrajetCatalogViewModel(ITrajetService service, INavigationService navigationService, IStateService stateService) : base(service, navigationService, stateService, "AddTrajet")
+    public TrajetCatalogViewModel(ITrajetService service, INavigationService navigationService) : base(service, navigationService, "AddTrajet")
     {
     }
 }

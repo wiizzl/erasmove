@@ -13,6 +13,7 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
 {
     private readonly IUtilisateurService _utilisateurService;
     private bool _referenceDataLoaded;
+    private bool _isLoadingData;
 
     [ObservableProperty] public partial string Nom { get; set; } = string.Empty;
     [ObservableProperty] public partial string Prenom { get; set; } = string.Empty;
@@ -31,21 +32,35 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
     protected override bool LoadItemDataImmediately => false;
     protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LoadDataAsync()
     {
-        var roles = await _utilisateurService.GetRolesAsync();
-        Roles.Clear();
-        foreach (var role in roles)
+        if (_referenceDataLoaded || _isLoadingData)
         {
-            Roles.Add(role);
+            return;
         }
 
-        _referenceDataLoaded = true;
-
-        if (EditingItem is not null)
+        try
         {
-            LoadItemData(EditingItem);
+            _isLoadingData = true;
+
+            var roles = await _utilisateurService.GetRolesAsync();
+            Roles.Clear();
+            foreach (var role in roles)
+            {
+                Roles.Add(role);
+            }
+
+            _referenceDataLoaded = true;
+
+            if (EditingItem is not null)
+            {
+                LoadItemData(EditingItem);
+            }
+        }
+        finally
+        {
+            _isLoadingData = false;
         }
     }
 

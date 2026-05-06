@@ -12,6 +12,6 @@ public partial class HomeView : ContentPage
         BindingContext = viewModel;
 
         HomeMap.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
-        HomeMap.Map.Navigator.OverrideZoomBounds = new MMinMax(200, 20000);
+        HomeMap.Map.Navigator.OverrideZoomBounds = new MMinMax(100, 20000);
     }
 }

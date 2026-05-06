@@ -7,7 +7,7 @@ namespace Erasmove.ViewModels;
 
 public partial class LieuCatalogViewModel : BaseCatalogViewModel<Lieu>
 {
-    public LieuCatalogViewModel(ILieuService service, INavigationService navigationService, IStateService stateService) : base(service, navigationService, stateService, "AddLieu")
+    public LieuCatalogViewModel(ILieuService service, INavigationService navigationService) : base(service, navigationService, "AddLieu")
     {
     }
 }

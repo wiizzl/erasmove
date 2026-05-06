@@ -13,14 +13,14 @@ public partial class AddTransportViewModel : BaseAddViewModel
 {
     private readonly ITransportService _transportService;
     private bool _referenceDataLoaded;
+    private bool _isLoadingData;
 
     [ObservableProperty] public partial string Compagnie { get; set; } = string.Empty;
     [ObservableProperty] public partial TypeTransport? SelectedType { get; set; }
 
     public ObservableCollection<TypeTransport> Types { get; } = [];
 
-    public AddTransportViewModel(ITransportService transportService, INavigationService navigationService) : base(
-        navigationService)
+    public AddTransportViewModel(ITransportService transportService, INavigationService navigationService) : base(navigationService)
     {
         _transportService = transportService;
     }
@@ -28,21 +28,35 @@ public partial class AddTransportViewModel : BaseAddViewModel
     protected override bool LoadItemDataImmediately => false;
     protected override bool HasReferenceDataLoaded => _referenceDataLoaded;
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LoadDataAsync()
     {
-        var types = await _transportService.GetTypeTransportsAsync();
-        Types.Clear();
-        foreach (var type in types)
+        if (_referenceDataLoaded || _isLoadingData)
         {
-            Types.Add(type);
+            return;
         }
 
-        _referenceDataLoaded = true;
-
-        if (EditingItem is not null)
+        try
         {
-            LoadItemData(EditingItem);
+            _isLoadingData = true;
+
+            var types = await _transportService.GetTypeTransportsAsync();
+            Types.Clear();
+            foreach (var type in types)
+            {
+                Types.Add(type);
+            }
+
+            _referenceDataLoaded = true;
+
+            if (EditingItem is not null)
+            {
+                LoadItemData(EditingItem);
+            }
+        }
+        finally
+        {
+            _isLoadingData = false;
         }
     }
 

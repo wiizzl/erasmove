@@ -61,16 +61,38 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         await Db.ExecuteNonQueryAsync("PSU_VOYAGE", parameters);
     }
 
+    public async Task<int> CreateVoyageWithEtapesAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
+    {
+        return await Db.ExecuteInTransactionAsync(async (connection, transaction) =>
+        {
+            var voyageParams = new[]
+            {
+                new SqlParameter("@VOY_LIBELLE", libelle),
+                new SqlParameter("@UTI_ID", utilisateurId),
+                new SqlParameter("@NEW_ID", SqlDbType.Int) { Direction = ParameterDirection.Output }
+            };
+
+            var voyageId = await Db.ExecuteNonQueryAsync("PSI_VOYAGE", connection, transaction, voyageParams, "@NEW_ID");
+
+            for (var i = 0; i < itineraireCalcule.Count; i++)
+            {
+                var etapeParams = new[]
+                {
+                    new SqlParameter("@VOY_ID", voyageId),
+                    new SqlParameter("@TRJ_ID", itineraireCalcule[i].Id),
+                    new SqlParameter("@VET_ORDRE", i + 1)
+                };
+
+                await Db.ExecuteNonQueryAsync("PSI_VOYAGE_ETAPE", connection, transaction, etapeParams);
+            }
+
+            return voyageId;
+        });
+    }
+
     public async Task SaveItineraireCalculeAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
     {
-        var newVoyageId = await AddVoyageAsync(libelle, utilisateurId);
-
-        var actualOrder = 1;
-        foreach (var etape in itineraireCalcule)
-        {
-            await AddVoyageEtapeAsync(newVoyageId, etape.Id, actualOrder);
-            actualOrder++;
-        }
+        await CreateVoyageWithEtapesAsync(libelle, utilisateurId, itineraireCalcule);
     }
 
     public async Task<List<VoyageEtapeDetail>> GetItineraireVoyageAsync(int voyageId)
