@@ -9,17 +9,18 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly IUtilisateurService _utilisateurService;
     private readonly INavigationService _navigationService;
-
+    private readonly CurrentUserService _currentUserService;
     [ObservableProperty] public partial string Login { get; set; } = string.Empty;
     [ObservableProperty] public partial string Password { get; set; } = string.Empty;
     [ObservableProperty] public partial string ErrorMessage { get; set; } = string.Empty;
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
 
-    public LoginViewModel(IUtilisateurService utilisateurService, INavigationService navigationService)
+    public LoginViewModel(IUtilisateurService utilisateurService, INavigationService navigationService, CurrentUserService currentUserService)
     {
         _utilisateurService = utilisateurService;
         _navigationService = navigationService;
+        _currentUserService = currentUserService;
     }
 
     [RelayCommand]
@@ -45,6 +46,8 @@ public partial class LoginViewModel : ObservableObject
 
             if (user != null)
             {
+                _currentUserService.SetCurrentUser(user);
+
                 if (user.IsAdmin)
                 {
                     await _navigationService.GoToAsync("//Admin");

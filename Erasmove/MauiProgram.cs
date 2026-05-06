@@ -25,6 +25,8 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
+        builder.Services.AddSingleton<CurrentUserService>();
+        builder.Services.AddSingleton<IHomeMapRenderer, HomeMapRenderer>();
 
         builder.Services.AddSingleton<ILieuService, LieuService>();
         builder.Services.AddSingleton<ITransportService, TransportService>();

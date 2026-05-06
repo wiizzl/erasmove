@@ -49,6 +49,12 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         await Db.ExecuteNonQueryAsync("PSU_VOYAGE", parameters);
     }
 
+    public async Task<List<Voyage>> GetVoyagesByUserAsync(int utilisateurId)
+    {
+        var parameters = new[] { new SqlParameter("@UTI_ID", utilisateurId) };
+        return await Db.ExecuteQueryAsync("PSS_VOYAGE", MapEntity, parameters);
+    }
+
     public async Task<int> CreateVoyageWithEtapesAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
     {
         return await Db.ExecuteInTransactionAsync(async (connection, transaction) =>
@@ -76,6 +82,24 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
 
             return voyageId;
         });
+    }
+
+    public async Task<List<VoyageEtapeDetail>> GetItineraireVoyageAsync(int voyageId)
+    {
+        var parameters = new[] { new SqlParameter("@VOY_ID", voyageId) };
+
+        return await Db.ExecuteQueryAsync("PSS_VOYAGE_ITINERARY", reader => new VoyageEtapeDetail
+        {
+            Ordre = (int)reader["VET_ORDRE"],
+            NomDepart = (string)reader["NOM_DEPART"],
+            LatDepart = Convert.ToDouble(reader["LAT_DEPART"]),
+            LonDepart = Convert.ToDouble(reader["LON_DEPART"]),
+            NomArrivee = (string)reader["NOM_ARRIVEE"],
+            LatArrivee = Convert.ToDouble(reader["LAT_ARRIVEE"]),
+            LonArrivee = Convert.ToDouble(reader["LON_ARRIVEE"]),
+            CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
+            TypeTransportLibelle = (string)reader["TYP_LIBELLE"]
+        }, parameters);
     }
 
 }
