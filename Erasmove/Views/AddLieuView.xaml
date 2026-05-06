@@ -2,15 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Erasmove.ViewModels"
+             xmlns:helpers="clr-namespace:Erasmove.Helpers"
              x:Class="Erasmove.Views.AddLieuView"
              x:DataType="vm:AddLieuViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:StringToDoubleConverter x:Key="StringToDoubleConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <VerticalStackLayout Padding="10" Spacing="10">
         <Entry Placeholder="Nom" Text="{Binding Nom}" />
         <Entry Placeholder="Ville" Text="{Binding Ville}" />
         <Entry Placeholder="Pays" Text="{Binding Pays}" />
-        <Entry Placeholder="Latitude" Text="{Binding Latitude}" Keyboard="Numeric" />
-        <Entry Placeholder="Longitude" Text="{Binding Longitude}" Keyboard="Numeric" />
+        <Entry Placeholder="Latitude" Text="{Binding Latitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}" Keyboard="Numeric" />
+        <Entry Placeholder="Longitude" Text="{Binding Longitude, Mode=TwoWay, Converter={StaticResource StringToDoubleConverter}}" Keyboard="Numeric" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 
