@@ -16,10 +16,13 @@ public partial class LoginViewModel : ObservableObject
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
 
-    public LoginViewModel(IUtilisateurService utilisateurService, INavigationService navigationService)
+    private readonly IStateService _stateService;
+
+    public LoginViewModel(IUtilisateurService utilisateurService, INavigationService navigationService, IStateService stateService)
     {
         _utilisateurService = utilisateurService;
         _navigationService = navigationService;
+        _stateService = stateService;
     }
 
     [RelayCommand]
@@ -45,6 +48,8 @@ public partial class LoginViewModel : ObservableObject
 
             if (user != null)
             {
+                _stateService.CurrentUser = user;
+
                 if (user.IsAdmin)
                 {
                     await _navigationService.GoToAsync("//Admin");

@@ -73,6 +73,12 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         }
     }
 
+    public async Task<List<Voyage>> GetVoyagesByUserAsync(int utilisateurId)
+    {
+        var parameters = new[] { new SqlParameter("@UTI_ID", utilisateurId) };
+        return await Db.ExecuteQueryAsync("PSS_VOYAGE", MapEntity, parameters);
+    }
+
     public async Task<List<VoyageEtapeDetail>> GetItineraireVoyageAsync(int voyageId)
     {
         var parameters = new[] { new SqlParameter("@VOY_ID", voyageId) };
@@ -81,7 +87,11 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         {
             Ordre = (int)reader["VET_ORDRE"],
             NomDepart = (string)reader["NOM_DEPART"],
+            LatDepart = (double)reader["LAT_DEPART"],
+            LonDepart = (double)reader["LON_DEPART"],
             NomArrivee = (string)reader["NOM_ARRIVEE"],
+            LatArrivee = (double)reader["LAT_ARRIVEE"],
+            LonArrivee = (double)reader["LON_ARRIVEE"],
             CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
             TypeTransportLibelle = (string)reader["TYP_LIBELLE"]
         }, parameters);

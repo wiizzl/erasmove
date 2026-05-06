@@ -4,7 +4,7 @@ namespace Erasmove.Helpers;
 
 public class StringToDoubleConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is double d)
         {
@@ -14,7 +14,7 @@ public class StringToDoubleConverter : IValueConverter
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var s = value as string;
         if (string.IsNullOrWhiteSpace(s))

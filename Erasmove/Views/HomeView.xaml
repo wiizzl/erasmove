@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
@@ -6,6 +6,17 @@
              x:Class="Erasmove.Views.HomeView"
              x:DataType="vm:HomeViewModel">
 
-    <mapsui:MapControl x:Name="HomeMap" />
+    <Grid RowDefinitions="Auto,*">
+
+        <Picker Grid.Row="0"
+                ItemsSource="{Binding Voyages}"
+                SelectedItem="{Binding SelectedVoyage}"
+                ItemDisplayBinding="{Binding Libelle}"
+                Title="Choisir un voyage"
+                Margin="16,8" />
+
+        <mapsui:MapControl Grid.Row="1" x:Name="HomeMap" />
+
+    </Grid>
 
 </ContentPage>

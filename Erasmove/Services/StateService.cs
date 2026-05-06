@@ -1,3 +1,4 @@
+using Erasmove.Models;
 using Erasmove.Models.Interfaces;
 using Erasmove.Services.Interfaces;
 
@@ -7,18 +8,9 @@ public class StateService : IStateService
 {
     private IEntity? _editingItem;
 
-    public void SetEditingItem(IEntity? item)
-    {
-        _editingItem = item;
-    }
+    public Utilisateur? CurrentUser { get; set; }
 
-    public IEntity? GetEditingItem()
-    {
-        return _editingItem;
-    }
-
-    public void ClearEditingItem()
-    {
-        _editingItem = null;
-    }
+    public void SetEditingItem(IEntity? item) => _editingItem = item;
+    public IEntity? GetEditingItem() => _editingItem;
+    public void ClearEditingItem() => _editingItem = null;
 }
