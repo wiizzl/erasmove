@@ -38,18 +38,6 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         return await Db.ExecuteNonQueryAsync("PSI_VOYAGE", parameters, "@NEW_ID");
     }
 
-    public async Task AddVoyageEtapeAsync(int voyageId, int trajetId, int ordre)
-    {
-        var parameters = new[]
-        {
-            new SqlParameter("@VOY_ID", voyageId),
-            new SqlParameter("@TRJ_ID", trajetId),
-            new SqlParameter("@VET_ORDRE", ordre)
-        };
-
-        await Db.ExecuteNonQueryAsync("PSI_VOYAGE_ETAPE", parameters);
-    }
-
     public async Task UpdateVoyageAsync(Voyage voyage)
     {
         var parameters = new[]
@@ -90,22 +78,4 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
         });
     }
 
-    public async Task SaveItineraireCalculeAsync(string libelle, int utilisateurId, List<Trajet> itineraireCalcule)
-    {
-        await CreateVoyageWithEtapesAsync(libelle, utilisateurId, itineraireCalcule);
-    }
-
-    public async Task<List<VoyageEtapeDetail>> GetItineraireVoyageAsync(int voyageId)
-    {
-        var parameters = new[] { new SqlParameter("@VOY_ID", voyageId) };
-
-        return await Db.ExecuteQueryAsync("PSS_VOYAGE_ITINERARY", reader => new VoyageEtapeDetail
-        {
-            Ordre = (int)reader["VET_ORDRE"],
-            NomDepart = (string)reader["NOM_DEPART"],
-            NomArrivee = (string)reader["NOM_ARRIVEE"],
-            CompagnieTransport = (string)reader["TRA_COMPAGNIE"],
-            TypeTransportLibelle = (string)reader["TYP_LIBELLE"]
-        }, parameters);
-    }
 }
