@@ -64,7 +64,10 @@ public partial class AddTransportViewModel : BaseAddViewModel
 
     protected override async Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Transport transport) return;
+        if (EditingItem is not Transport transport)
+        {
+            return;
+        };
 
         transport.Compagnie = Compagnie;
         transport.TypeId = SelectedType!.Id;

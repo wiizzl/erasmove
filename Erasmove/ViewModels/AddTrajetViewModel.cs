@@ -82,7 +82,10 @@ public partial class AddTrajetViewModel : BaseAddViewModel
 
     protected override async Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Trajet trajet) return;
+        if (EditingItem is not Trajet trajet)
+        {
+            return;
+        }
 
         trajet.LieuDepartId = SelectedDepart!.Id;
         trajet.LieuArriveeId = SelectedArrivee!.Id;

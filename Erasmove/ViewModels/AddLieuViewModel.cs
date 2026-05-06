@@ -45,7 +45,10 @@ public partial class AddLieuViewModel : BaseAddViewModel
 
     protected override async Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Lieu lieu) return;
+        if (EditingItem is not Lieu lieu)
+        {
+            return;
+        }
 
         lieu.Nom = Nom;
         lieu.Ville = Ville;

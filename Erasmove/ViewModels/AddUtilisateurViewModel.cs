@@ -73,15 +73,17 @@ public partial class AddUtilisateurViewModel : BaseAddViewModel
 
     protected override async Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Utilisateur utilisateur) return;
+        if (EditingItem is not Utilisateur utilisateur)
+        {
+            return;
+        }
 
         utilisateur.Nom = Nom;
         utilisateur.Prenom = Prenom;
         utilisateur.Login = Login;
         utilisateur.RoleId = SelectedRole!.Id;
 
-        await _utilisateurService.UpdateUtilisateurAsync(utilisateur,
-            string.IsNullOrEmpty(MotDePasse) ? null : MotDePasse);
+        await _utilisateurService.UpdateUtilisateurAsync(utilisateur, string.IsNullOrEmpty(MotDePasse) ? null : MotDePasse);
     }
 
     protected override void LoadItemData(IEntity item)
