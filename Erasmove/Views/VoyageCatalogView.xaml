@@ -14,7 +14,6 @@
                         <HorizontalStackLayout Spacing="10" Padding="5">
                             <Label Text="{Binding Libelle}" />
                             <Label Text="{Binding UtilisateurNom}" />
-                            <Button Text="Modifier" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=EditItemCommand}" CommandParameter="{Binding .}" />
                             <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
                         </HorizontalStackLayout>
                     </DataTemplate>

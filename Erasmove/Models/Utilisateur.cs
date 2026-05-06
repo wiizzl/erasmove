@@ -12,4 +12,5 @@ public class Utilisateur : IEntity
     public int RoleId { get; set; }
     public string RoleLibelle { get; set; } = string.Empty;
     public bool IsAdmin => RoleLibelle.Equals("Gestionnaire");
+    public string FullName => $"{Prenom} {Nom}";
 }

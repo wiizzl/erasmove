@@ -7,13 +7,36 @@
              x:DataType="vm:AddVoyageViewModel">
 
     <VerticalStackLayout Padding="10" Spacing="10">
-        <Picker Title="Étudiant" ItemsSource="{Binding Utilisateurs}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedUtilisateur}" />
+        <Entry Placeholder="Intitulé du voyage" Text="{Binding Libelle}" />
+
+        <Picker Title="Voyageur"
+                ItemsSource="{Binding Utilisateurs}"
+                ItemDisplayBinding="{Binding FullName}"
+                SelectedItem="{Binding SelectedUtilisateur}" />
+
         <Picker Title="Lieu de départ" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedDepart}" />
         <Picker Title="Lieu d'arrivée" ItemsSource="{Binding Lieux}" ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SelectedArrivee}" />
 
+        <Button Text="Calculer meilleur itinéraire" Command="{Binding CalculateBestItineraryCommand}" />
+
+        <Label Text="{Binding ItineraireMessage}" LineBreakMode="WordWrap" />
+
+        <CollectionView ItemsSource="{Binding ItineraireCalcule}" IsVisible="{Binding HasResult}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Trajet">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding LieuDepartNom}" FontAttributes="Bold" />
+                        <Label Text="{Binding LieuArriveeNom}" />
+                        <Label Text="{Binding TypeTransportLibelle}" />
+                        <Label Text="{Binding CompagnieTransport}" FontSize="12" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 
-        <Button Text="Enregistrer Voyage" Command="{Binding SaveCommand}" IsEnabled="{Binding HasResult}" />
+        <Button Text="Enregistrer Voyage" Command="{Binding SaveCommand}" />
         <Button Text="Annuler" Command="{Binding CancelCommand}" />
     </VerticalStackLayout>
 

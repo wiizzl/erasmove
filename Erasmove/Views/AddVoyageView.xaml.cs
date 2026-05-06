@@ -33,9 +33,8 @@ public partial class AddVoyageView : ContentPage
         {
             return;
         }
-        
-        var item = _stateService.GetEditingItem() as Voyage;
-        viewModel.SetEditingItem(item);
+
+        // Modification désactivée : on n'applique jamais d'élément en édition.
         _stateService.ClearEditingItem();
     }
 }
