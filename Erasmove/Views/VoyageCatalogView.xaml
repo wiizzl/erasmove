@@ -21,7 +21,7 @@
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="1" Text="Nouveau Voyage (Algo)" Command="{Binding GoToAddPageCommand}" />
+        <Button Grid.Row="1" Text="Nouveau Voyage" Command="{Binding GoToAddPageCommand}" />
     </Grid>
 
 </ContentPage>
