@@ -13,7 +13,6 @@ public partial class HomeViewModel : BaseCatalogViewModel<Voyage>
     private readonly IVoyageService _voyageService;
 
     [ObservableProperty] public partial Voyage? SelectedVoyage { get; set; }
-    [ObservableProperty] public partial string ErrorMessage { get; set; } = string.Empty;
     [ObservableProperty] public partial ObservableCollection<VoyageEtapeDetail> SelectedVoyageItinerary { get; set; } = [];
 
     public HomeViewModel(CurrentUserService currentUserService, IVoyageService voyageService, INavigationService navigationService) : base(voyageService, navigationService, "AddVoyage")
@@ -32,14 +31,12 @@ public partial class HomeViewModel : BaseCatalogViewModel<Voyage>
         try
         {
             IsRefreshing = true;
-            ErrorMessage = string.Empty;
 
             if (_currentUserService.CurrentUser == null)
             {
                 Items.Clear();
                 SelectedVoyage = null;
                 SelectedVoyageItinerary = [];
-                ErrorMessage = "Utilisateur non connecté.";
                 return;
             }
 
@@ -61,10 +58,6 @@ public partial class HomeViewModel : BaseCatalogViewModel<Voyage>
                 SelectedVoyageItinerary = [];
             }
         }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Erreur lors du chargement des voyages: {ex.Message}";
-        }
         finally
         {
             IsRefreshing = false;
@@ -84,9 +77,8 @@ public partial class HomeViewModel : BaseCatalogViewModel<Voyage>
             var itinerary = await _voyageService.GetItineraireVoyageAsync(voyage.Id);
             SelectedVoyageItinerary = new ObservableCollection<VoyageEtapeDetail>(itinerary);
         }
-        catch (Exception ex)
+        catch
         {
-            ErrorMessage = $"Erreur lors du chargement de l'itinéraire: {ex.Message}";
             SelectedVoyageItinerary = [];
         }
     }

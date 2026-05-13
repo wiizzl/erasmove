@@ -6,17 +6,17 @@
              x:Class="Erasmove.Views.HomeView"
              x:DataType="vm:HomeViewModel">
 
-    <Grid RowDefinitions="Auto,*" Padding="10">
-        <VerticalStackLayout Spacing="10" Padding="0">
-            <Label Text="Sélectionner un voyage:" FontAttributes="Bold" />
-                <Picker ItemsSource="{Binding Items}"
+    <Grid RowDefinitions="Auto, *" Style="{StaticResource MainContainerGrid}">
+        
+        <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,10">
+            <Label Text="Sélectionner votre voyage" />
+            <Picker ItemsSource="{Binding Items}"
                     SelectedItem="{Binding SelectedVoyage}"
-                    ItemDisplayBinding="{Binding Libelle}"
-                    Title="Aucun voyage" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+                    ItemDisplayBinding="{Binding Libelle}" />
         </VerticalStackLayout>
 
         <mapsui:MapControl x:Name="HomeMap" Grid.Row="1" />
+        
     </Grid>
 
 </ContentPage>
