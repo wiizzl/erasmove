@@ -38,12 +38,8 @@ Exécuter les scripts présents dans le dossier [sql](./sql/).
 
 ```sh
 dotnet build
-```
 
-Puis lancer l'application :
-
-```sh
-dotnet run
+dotnet run --project Erasmove
 ```
 
 ## Se connecter

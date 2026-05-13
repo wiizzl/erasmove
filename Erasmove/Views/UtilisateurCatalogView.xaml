@@ -6,24 +6,50 @@
              x:Class="Erasmove.Views.UtilisateurCatalogView"
              x:DataType="vm:UtilisateurCatalogViewModel">
 
-    <Grid RowDefinitions="*, Auto" Padding="10">
-        <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
+    <Grid RowDefinitions="Auto, Auto, *, Auto" Style="{StaticResource MainContainerGrid}">
+        
+        <Grid Grid.Row="1" RowDefinitions="Auto, Auto" ColumnDefinitions="2*, 2*, 2*, 2*, 80, 40" Style="{StaticResource TableHeaderGrid}">
+            
+            <Label Grid.Row="0" Grid.Column="0" Text="Login" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Row="0" Grid.Column="1" Text="Nom" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Row="0" Grid.Column="2" Text="Prénom" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Row="0" Grid.Column="3" Text="Rôle" Style="{StaticResource TableHeaderLabel}" />
+        </Grid>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Items}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Utilisateur">
-                        <HorizontalStackLayout Spacing="10" Padding="5">
-                            <Label Text="{Binding Nom}" FontAttributes="Bold" />
-                            <Label Text="{Binding Prenom}" />
-                            <Label Text="{Binding RoleLibelle}" TextColor="Gray" />
-                            <Button Text="Modifier" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=EditItemCommand}" CommandParameter="{Binding .}" />
-                            <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout>
+                            <BoxView Style="{StaticResource TableSeparator}" />
+                            
+                            <Grid ColumnDefinitions="2*, 2*, 2*, 2*, 80, 40" Style="{StaticResource TableRowGrid}">
+                                <Label Grid.Column="0" Text="{Binding Login}" Style="{StaticResource TableCellLabel}" />
+                                <Label Grid.Column="1" Text="{Binding Nom}" Style="{StaticResource TableCellLabel}" />
+                                <Label Grid.Column="2" Text="{Binding Prenom}" Style="{StaticResource TableCellLabel}" />
+                                <Label Grid.Column="3" Text="{Binding RoleLibelle}" Style="{StaticResource TableCellLabel}" />
+                                
+                                <Button Grid.Column="4" Text="✏️" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=EditItemCommand}" 
+                                        CommandParameter="{Binding .}" 
+                                        Style="{StaticResource TableActionButton}" />
+                                
+                                <Button Grid.Column="5" Text="🗑️" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UtilisateurCatalogViewModel}}, Path=DeleteItemCommand}" 
+                                        CommandParameter="{Binding .}" 
+                                        Style="{StaticResource TableActionButton}" />
+                            </Grid>
+                            
+                            <BoxView Style="{StaticResource TableSeparator}" />
+                        </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="1" Text="Ajouter Utilisateur" Command="{Binding GoToAddPageCommand}" />
+        <Button Grid.Row="3" Text="Ajouter Utilisateur" 
+                Command="{Binding GoToAddPageCommand}" 
+                Style="{StaticResource AddButtonStyle}" />
     </Grid>
 
 </ContentPage>

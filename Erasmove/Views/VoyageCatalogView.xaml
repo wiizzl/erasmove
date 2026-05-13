@@ -6,22 +6,51 @@
              x:Class="Erasmove.Views.VoyageCatalogView"
              x:DataType="vm:VoyageCatalogViewModel">
 
-    <Grid RowDefinitions="*, Auto" Padding="10">
-        <RefreshView Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
+   <Grid RowDefinitions="Auto, Auto, *, Auto" Style="{StaticResource MainContainerGrid}">
+        
+        <Grid Grid.Row="1" RowDefinitions="Auto, Auto" ColumnDefinitions="2*, 2*, 2*, 80, 40" Style="{StaticResource TableHeaderGrid}">
+            
+            <Label Grid.Row="0" Grid.Column="0" Text="Libellé" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Row="0" Grid.Column="1" Text="Utilisateur" Style="{StaticResource TableHeaderLabel}" />
+            <Label Grid.Row="0" Grid.Column="2" Text="" Style="{StaticResource TableHeaderLabel}" />
+        </Grid>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Items}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Voyage">
-                        <HorizontalStackLayout Spacing="10" Padding="5">
-                            <Label Text="{Binding Libelle}" />
-                            <Label Text="{Binding UtilisateurNom}" />
-                            <Button Text="X" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=DeleteItemCommand}" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout>
+                            <BoxView Style="{StaticResource TableSeparator}" />
+                            
+                            <Grid ColumnDefinitions="2*, 2*, 2*, 80, 40" Style="{StaticResource TableRowGrid}">
+                                
+                                <Label Grid.Column="0" Text="{Binding Libelle}" Style="{StaticResource TableCellLabel}" />
+                                <Label Grid.Column="1" Style="{StaticResource TableCellLabel}">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="UtilisateurPrenom" />
+                                            <Binding Path="UtilisateurNom" />
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
+                                <Label Grid.Column="2" Text="" />
+                                
+                                <Button Grid.Column="4" Text="🗑️" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VoyageCatalogViewModel}}, Path=DeleteItemCommand}" 
+                                        CommandParameter="{Binding .}" 
+                                        Style="{StaticResource TableActionButton}" />
+                            </Grid>
+                            
+                            <BoxView Style="{StaticResource TableSeparator}" />
+                        </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="1" Text="Nouveau Voyage" Command="{Binding GoToAddPageCommand}" />
+        <Button Grid.Row="3" Text="Nouveau voyage" 
+                Command="{Binding GoToAddPageCommand}" 
+                Style="{StaticResource AddButtonStyle}" />
     </Grid>
 
 </ContentPage>
