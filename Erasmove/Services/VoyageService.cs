@@ -40,13 +40,7 @@ public class VoyageService : BaseCrudService<Voyage>, IVoyageService
 
     public async Task UpdateVoyageAsync(Voyage voyage)
     {
-        var parameters = new[]
-        {
-            new SqlParameter("@VOY_ID", voyage.Id),
-            new SqlParameter("@VOY_LIBELLE", voyage.Libelle)
-        };
-
-        await Db.ExecuteNonQueryAsync("PSU_VOYAGE", parameters);
+        throw new NotImplementedException();
     }
 
     public async Task<List<Voyage>> GetVoyagesByUserAsync(int utilisateurId)

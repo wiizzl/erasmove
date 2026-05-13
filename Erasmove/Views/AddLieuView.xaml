@@ -21,8 +21,11 @@
 
         <ActivityIndicator IsRunning="{Binding IsBusy}" />
 
-        <Button Text="Enregistrer" Command="{Binding SaveCommand}" />
-        <Button Text="Annuler" Command="{Binding CancelCommand}" />
+        <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,0">
+            <Button Grid.Column="0" Text="Annuler" Command="{Binding CancelCommand}" Style="{StaticResource AddButtonStyle}" />
+            <Button Grid.Column="1" Text="Enregistrer" Command="{Binding SaveCommand}" 
+                    Style="{StaticResource AddButtonStyle}" />
+        </Grid>
     </VerticalStackLayout>
 
 </ContentPage>

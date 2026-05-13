@@ -142,27 +142,14 @@ public partial class AddVoyageViewModel : BaseAddViewModel
         await _voyageService.CreateVoyageWithEtapesAsync(Libelle, SelectedUtilisateur!.Id, ItineraireCalcule.ToList());
     }
 
-    protected override async Task ExecuteUpdateAsync()
+    protected override Task ExecuteUpdateAsync()
     {
-        if (EditingItem is not Voyage voyage)
-        {
-            return;
-        }
-
-        voyage.Libelle = Libelle.Trim();
-        await _voyageService.UpdateVoyageAsync(voyage);
+        throw new NotImplementedException();
     }
 
     protected override void LoadItemData(IEntity item)
     {
-        if (item is not Voyage voyage)
-        {
-            return;
-        }
-        Libelle = voyage.Libelle;
-        SelectedUtilisateur = Utilisateurs.FirstOrDefault(utilisateur => utilisateur.Id == voyage.UtilisateurId);
-        HasResult = true;
-        ItineraireMessage = "Mode modification: seul l'intitulé est modifiable.";
+        throw new NotImplementedException();
     }
 
     partial void OnSelectedDepartChanged(Lieu? value)
@@ -250,5 +237,4 @@ public partial class AddVoyageViewModel : BaseAddViewModel
 
         return path;
     }
-
 }

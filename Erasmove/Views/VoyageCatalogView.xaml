@@ -48,7 +48,7 @@
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="3" Text="Nouveau voyage" 
+        <Button Grid.Row="3" Text="Ajouter un voyage" 
                 Command="{Binding GoToAddPageCommand}" 
                 Style="{StaticResource AddButtonStyle}" />
     </Grid>
