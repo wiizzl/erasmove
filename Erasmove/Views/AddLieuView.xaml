@@ -16,7 +16,7 @@
         <VerticalStackLayout Padding="32,24"
                              Spacing="12"
                              HorizontalOptions="Center"
-                             MaximumWidthRequest="560">
+                             MaximumWidthRequest="624">
 
                 <Label Text="Ajouter un Lieu" Style="{StaticResource TablePageTitle}" Margin="0,0,0,8" />
 
